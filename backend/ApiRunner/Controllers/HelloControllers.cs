@@ -9,7 +9,7 @@ namespace ApiRunner.Controllers
         [HttpGet]
         public IActionResult Hello()
         {
-            return Ok("Hello, RPG World!");
+            return Ok("Hello, RPG this is me and her Worlds!");
         }
     }
 }
