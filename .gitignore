@@ -1,0 +1,40 @@
+# .NET artifacts
+**/bin/
+**/obj/
+*.user
+*.suo
+*.cache
+*.dbmdl
+*.log
+
+# Rider/VS/VSCode IDEs
+.vscode/
+.idea/
+*.sln.docstates
+
+# Frontend node_modules
+frontend/quest-ui/node_modules/
+frontend/quest-ui/.vite/
+frontend/quest-ui/dist/
+
+# Logs and temp files
+*.log
+*.tmp
+*.pid
+
+# Build output
+**/publish/
+**/wwwroot/
+
+# OS crap
+.DS_Store
+Thumbs.db
+
+# Docker volumes (if mounted locally)
+docker/data/
+docker/tmp/
+
+# Secrets (you should gitignore envs or encrypt them)
+*.env
+*.env.local
+.env.*
