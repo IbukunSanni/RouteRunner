@@ -67,8 +67,17 @@ namespace ApiRunner.Controllers
             var integration = FakeDatabase.Integrations.FirstOrDefault(i => i.Id == integrationId);
             if (integration == null) return NotFound();
 
-            var removed = integration.Requests.RemoveAll(r => r.Id == requestId);
-            return removed > 0 ? NoContent() : NotFound();
+            var request = integration.Requests.FirstOrDefault(r => r.Id == requestId);
+            if (request == null) return NotFound();
+
+            integration.Requests.Remove(request);
+
+            return Ok(new
+            {
+                message = "Request deleted successfully",
+                deleted = request
+            });
         }
+
     }
 }

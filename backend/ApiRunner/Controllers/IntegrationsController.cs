@@ -64,11 +64,12 @@ namespace ApiRunner.Controllers
 
 
         [HttpPost("{id}/run")]
-        public async Task<IActionResult> RunIntegration(Guid id)
+        public async Task<IActionResult> RunIntegration(Guid id, [FromBody] RunRequest? runRequest)
         {
             var integration = FakeDatabase.Integrations.FirstOrDefault(i => i.Id == id);
-            if (integration == null) return NotFound($"Integration with ID {id} not found.");
+            if (integration == null) return NotFound();
 
+            var values = runRequest?.Values ?? new();
             var results = new List<RunResult>();
 
             foreach (var req in integration.Requests)
@@ -142,5 +143,11 @@ namespace ApiRunner.Controllers
                 return json;
             }
         }
+
+        public class RunRequest
+        {
+            public Dictionary<string, string>? Values { get; set; }
+        }
+
     }
 }
