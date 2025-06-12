@@ -5,7 +5,8 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-// using ApiRunner.Helpers;
+using static ApiRunner.Helpers.HttpHelpers;
+
 
 namespace ApiRunner.Controllers
 {
@@ -75,7 +76,7 @@ namespace ApiRunner.Controllers
 
             foreach (var req in integration.Requests)
             {
-                var url = ApplyPlaceholders(req.Url, values);
+                var url = Helpers.HttpHelpers.ApplyPlaceholders(req.Url, values);
                 var method = new HttpMethod(req.Method.ToUpper());
                 var message = new HttpRequestMessage(method, url);
 
@@ -93,7 +94,6 @@ namespace ApiRunner.Controllers
                     message.Content = new StringContent(resolvedBody, Encoding.UTF8, "application/json");
                 }
 
-                var stopwatch = Stopwatch.StartNew();
 
                 // Run request
                 var stopwatch = Stopwatch.StartNew();
