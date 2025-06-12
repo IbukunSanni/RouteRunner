@@ -51,9 +51,17 @@ namespace ApiRunner.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteIntegration(Guid id)
         {
-            var removed = FakeDatabase.Integrations.RemoveAll(i => i.Id == id);
-            return removed > 0 ? NoContent() : NotFound();
+            var integration = FakeDatabase.Integrations.FirstOrDefault(i => i.Id == id);
+            if (integration == null) return NotFound();
+
+            FakeDatabase.Integrations.Remove(integration);
+            return Ok(new
+            {
+                message = "Integration deleted successfully",
+                deleted = integration
+            });
         }
+
 
         [HttpPost("{id}/run")]
         public async Task<IActionResult> RunIntegration(Guid id)
