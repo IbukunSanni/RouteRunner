@@ -14,12 +14,17 @@ namespace ApiRunner.Controllers
             var integration = FakeDatabase.Integrations.FirstOrDefault(i => i.Id == integrationId);
             if (integration == null) return NotFound();
 
-            newRequest.Id ??= Guid.NewGuid().ToString();
-            integration.Requests.Add(newRequest);
+            // Ensure ID is non-empty and unique within this integration
+            if (string.IsNullOrWhiteSpace(newRequest.Id) ||
+                integration.Requests.Any(r => r.Id == newRequest.Id))
+            {
+                newRequest.Id = Guid.NewGuid().ToString();
+            }
 
+            integration.Requests.Add(newRequest);
             return Ok(newRequest);
         }
-        
+
         [HttpGet]
         public IActionResult GetAll(Guid integrationId)
         {
@@ -39,7 +44,7 @@ namespace ApiRunner.Controllers
             return request == null ? NotFound() : Ok(request);
         }
 
-        
+
 
         [HttpPut("{requestId}")]
         public IActionResult Update(Guid integrationId, string requestId, [FromBody] ApiRequest updated)

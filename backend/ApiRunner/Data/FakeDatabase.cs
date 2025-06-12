@@ -18,6 +18,8 @@ namespace ApiRunner.Data
                     {
                         new ApiRequest
                         {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = "Fetch Post 1",
                             Method = "GET",
                             Url = "https://jsonplaceholder.typicode.com/posts/1",
                             Headers = new Dictionary<string, string>(),
@@ -25,6 +27,8 @@ namespace ApiRunner.Data
                         },
                         new ApiRequest
                         {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = "Fetch Post 2",
                             Method = "GET",
                             Url = "https://jsonplaceholder.typicode.com/posts/2",
                             Headers = new Dictionary<string, string>(),
@@ -41,6 +45,8 @@ namespace ApiRunner.Data
                     {
                         new ApiRequest
                         {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = "Create New Post",
                             Method = "POST",
                             Url = "https://jsonplaceholder.typicode.com/posts",
                             Headers = new Dictionary<string, string>
@@ -61,6 +67,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "login",
+                            Name = "User Login",
                             Method = "POST",
                             Url = "https://example.com/api/auth",
                             Headers = new Dictionary<string, string>
@@ -76,6 +83,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "getProfile",
+                            Name = "Get User Profile",
                             Method = "GET",
                             Url = "https://example.com/api/users/me",
                             Headers = new Dictionary<string, string>
@@ -91,6 +99,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "getPosts",
+                            Name = "Get User Posts",
                             Method = "GET",
                             Url = "https://example.com/api/users/{{userId}}/posts",
                             Headers = new Dictionary<string, string>
@@ -111,6 +120,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "createPost",
+                            Name = "Create Commented Post",
                             Method = "POST",
                             Url = "https://jsonplaceholder.typicode.com/posts",
                             Headers = new Dictionary<string, string>
@@ -126,6 +136,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "addComment1",
+                            Name = "Add Riku Comment",
                             Method = "POST",
                             Url = "https://jsonplaceholder.typicode.com/posts/{{postId}}/comments",
                             Headers = new Dictionary<string, string>
@@ -137,6 +148,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "addComment2",
+                            Name = "Add Kairi Comment",
                             Method = "POST",
                             Url = "https://jsonplaceholder.typicode.com/posts/{{postId}}/comments",
                             Headers = new Dictionary<string, string>
@@ -148,6 +160,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "verifyPost",
+                            Name = "Verify Post Exists",
                             Method = "GET",
                             Url = "https://jsonplaceholder.typicode.com/posts/{{postId}}",
                             Headers = new Dictionary<string, string>(),
@@ -165,6 +178,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "getUser",
+                            Name = "Get User Info",
                             Method = "GET",
                             Url = "https://jsonplaceholder.typicode.com/users/1",
                             Headers = new Dictionary<string, string>(),
@@ -178,6 +192,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "getTodos",
+                            Name = "Get User Todos",
                             Method = "GET",
                             Url = "https://jsonplaceholder.typicode.com/users/1/todos",
                             Headers = new Dictionary<string, string>(),
@@ -186,6 +201,7 @@ namespace ApiRunner.Data
                         new ApiRequest
                         {
                             Id = "getPosts",
+                            Name = "Get User Posts",
                             Method = "GET",
                             Url = "https://jsonplaceholder.typicode.com/users/1/posts",
                             Headers = new Dictionary<string, string>(),
