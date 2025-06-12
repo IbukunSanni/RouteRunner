@@ -21,6 +21,13 @@ namespace ApiRunner.Data
                             Url = "https://jsonplaceholder.typicode.com/posts/1",
                             Headers = new Dictionary<string, string>(),
                             Body = null
+                        },
+                        new ApiRequest
+                        {
+                            Method = "GET",
+                            Url = "https://jsonplaceholder.typicode.com/posts/2",
+                            Headers = new Dictionary<string, string>(),
+                            Body = null
                         }
                     }
                 },
