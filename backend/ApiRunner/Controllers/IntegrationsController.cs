@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+// using ApiRunner.Helpers;
 
 namespace ApiRunner.Controllers
 {
@@ -74,41 +75,36 @@ namespace ApiRunner.Controllers
 
             foreach (var req in integration.Requests)
             {
-                var message = new HttpRequestMessage(new HttpMethod(req.Method), req.Url);
+                var url = ApplyPlaceholders(req.Url, values);
+                var method = new HttpMethod(req.Method.ToUpper());
+                var message = new HttpRequestMessage(method, url);
 
                 // Add headers
-                if (req.Headers != null)
+                foreach (var header in req.Headers ?? new())
                 {
-                    foreach (var header in req.Headers)
-                    {
-                        message.Headers.TryAddWithoutValidation(header.Key, header.Value);
-                    }
+                    var headerValue = ApplyPlaceholders(header.Value, values);
+                    message.Headers.TryAddWithoutValidation(header.Key, headerValue);
                 }
 
                 // Add body if applicable
-                if (!string.IsNullOrWhiteSpace(req.Body) &&
-                    (req.Method.ToUpper() is "POST" or "PUT" or "PATCH"))
+                if (!string.IsNullOrWhiteSpace(req.Body) && method != HttpMethod.Get)
                 {
-                    message.Content = new StringContent(req.Body, Encoding.UTF8, "application/json");
+                    var resolvedBody = ApplyPlaceholders(req.Body, values);
+                    message.Content = new StringContent(resolvedBody, Encoding.UTF8, "application/json");
                 }
 
                 var stopwatch = Stopwatch.StartNew();
+
+                // Run request
+                var stopwatch = Stopwatch.StartNew();
+                HttpResponseMessage response;
+                string responseBody;
+
                 try
                 {
-                    var response = await httpClient.SendAsync(message);
-                    stopwatch.Stop();
+                    response = await httpClient.SendAsync(message);
+                    responseBody = await response.Content.ReadAsStringAsync();
 
-                    var body = await response.Content.ReadAsStringAsync();
-
-                    results.Add(new RunResult
-                    {
-                        Url = req.Url,
-                        Method = req.Method,
-                        StatusCode = (int)response.StatusCode,
-                        DurationMs = stopwatch.ElapsedMilliseconds,
-                        ResponseBody = TryPrettyPrintJson(body),
-                        IsSuccess = response.IsSuccessStatusCode
-                    });
                 }
                 catch (Exception ex)
                 {
@@ -122,27 +118,30 @@ namespace ApiRunner.Controllers
                         ResponseBody = $"Error: {ex.Message}",
                         IsSuccess = false
                     });
+                    continue;
                 }
+                stopwatch.Stop();
+                // Extract values via JSONPath
+                if (req.Extractors != null && req.Extractors.Any())
+                {
+                    ExtractValuesFromResponse(responseBody, req.Extractors, values);
+                }
+
+                results.Add(new RunResult
+                {
+                    Url = url,
+                    Method = req.Method,
+                    StatusCode = (int)response.StatusCode,
+                    DurationMs = stopwatch.ElapsedMilliseconds,
+                    ResponseBody = TryPrettyPrintJson(responseBody),
+                    IsSuccess = response.IsSuccessStatusCode
+                });
+
             }
 
             return Ok(results);
         }
 
-        private static string TryPrettyPrintJson(string json)
-        {
-            try
-            {
-                var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
-                return JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-            }
-            catch
-            {
-                return json;
-            }
-        }
 
         public class RunRequest
         {
