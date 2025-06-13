@@ -7,7 +7,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import type { ApiRequest } from '@/types/integration'; // Or define inline if needed
+import type { ApiRequest } from "@/types/integration"; // Or define inline if needed
 import { useState } from "react";
 
 interface EditRequestModalProps {
@@ -39,7 +39,7 @@ export default function EditRequestModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl bg-white text-black shadow-xl">
         <DialogHeader>
           <DialogTitle>Edit Request</DialogTitle>
         </DialogHeader>
@@ -76,10 +76,10 @@ export default function EditRequestModal({
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="destructive"   onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave} >Confirm</Button>
         </div>
       </DialogContent>
     </Dialog>
