@@ -6,7 +6,7 @@ import type { Integration, ApiRequest } from "@/types/integration";
 import { Pencil, Trash2, ArrowLeft, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KeyValueEditor from "@/components/KeyValueEditor";
-
+import { Input } from "@/components/ui/input";
 import {
   DndContext,
   PointerSensor,
@@ -178,9 +178,17 @@ export default function IntegrationEditor() {
         Back to Integrations
       </button>
 
-      <h1 className="text-3xl font-bold text-indigo-600">
-        Editing Integration: {integration.name}
-      </h1>
+      
+      <div className="flex items-center gap-2">
+        <Input
+          className="text-2xl font-bold text-indigo-600 border-none focus:ring-0 focus:outline-none w-auto"
+          value={integration.name}
+          onChange={(e) =>
+            setIntegration((prev) => prev && { ...prev, name: e.target.value })
+          }
+        />
+        <span className="text-zinc-400 text-sm">← click to rename</span>
+      </div>
 
       {/* Save status */}
       <div className="text-sm text-zinc-600">

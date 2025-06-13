@@ -38,7 +38,6 @@ export default function EditRequestModal({
   );
   const [invalidExtractors, setInvalidExtractors] = useState<number[]>([]);
 
-
   // Sync header key-value pairs back to the draft object
   useEffect(() => {
     const cleanObject = (entries: [string, string][]) =>
@@ -187,7 +186,32 @@ export default function EditRequestModal({
 
           {/* Extractors section: define values to extract from responses */}
           <div className="space-y-2">
-            <p className="font-semibold text-sm">Extractors</p>
+            <div className="flex flex-col space-y-1">
+              <p className="font-semibold text-sm">Extractors</p>
+              <p className="text-xs text-zinc-500 leading-snug">
+                Extract a value from this request's JSON response using a{" "}
+                <a
+                  href="https://jsonpath.com/"
+                  target="_blank"
+                  className="text-blue-600 underline"
+                >
+                  JSONPath
+                </a>{" "}
+                expression. For example:
+              </p>
+              <ul className="text-xs text-zinc-500 list-disc list-inside">
+                <li>
+                  <code className="text-indigo-600 font-mono">userId</code> →{" "}
+                  <code className="text-indigo-600 font-mono">$.id</code>
+                </li>
+                <li>
+                  <code className="text-indigo-600 font-mono">token</code> →{" "}
+                  <code className="text-indigo-600 font-mono">
+                    $.data.token
+                  </code>
+                </li>
+              </ul>
+            </div>
 
             {extractors.map(([key, path], index) => (
               <div key={index} className="flex gap-2 items-center">
@@ -262,4 +286,3 @@ function isValidJsonPath(path: string): boolean {
     return false;
   }
 }
-

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { api } from '@/api/client';
-import { Button } from '@/components/ui/button'; // Shadcn
-import { Card, CardContent } from '@/components/ui/card'; // Shadcn
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "@/api/client";
+import { Button } from "@/components/ui/button"; // Shadcn
+import { Card, CardContent } from "@/components/ui/card"; // Shadcn
 
 interface Integration {
   id: string;
@@ -15,15 +15,16 @@ export default function IntegrationList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/integrations')
-      .then(res => setIntegrations(res.data))
-      .catch(err => console.error('Failed to fetch integrations', err))
+    api
+      .get("/integrations")
+      .then((res) => setIntegrations(res.data))
+      .catch((err) => console.error("Failed to fetch integrations", err))
       .finally(() => setLoading(false));
   }, []);
 
   const createNewIntegration = async () => {
-    const res = await api.post('/integrations', {
-      name: 'Untitled Integration',
+    const res = await api.post("/integrations", {
+      name: "Untitled Integration",
       requests: [],
     });
     navigate(`/integrations/${res.data.id}`);
@@ -32,14 +33,21 @@ export default function IntegrationList() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-indigo-600">Your Integrations</h1>
-        <Button onClick={createNewIntegration}>+ New Integration</Button>
+        <h1 className="text-2xl font-bold text-indigo-600">
+          Your Integrations
+        </h1>
+        <Button
+          onClick={createNewIntegration}
+          className="cursor-pointer bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition"
+        >
+          + New Integration
+        </Button>
       </div>
 
       {loading && <p className="text-gray-500">Loading...</p>}
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {integrations.map(integration => (
+        {integrations.map((integration) => (
           <Card
             key={integration.id}
             className="cursor-pointer hover:shadow-lg transition"
