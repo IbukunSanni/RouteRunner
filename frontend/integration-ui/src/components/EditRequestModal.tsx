@@ -6,11 +6,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import Editor from "react-simple-code-editor";
+import Prism from "prismjs";
+import "prismjs/components/prism-json";
 import { Button } from "@/components/ui/button";
 import type { ApiRequest } from "@/types/integration";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { JSONPath } from "jsonpath-plus";
 
 interface EditRequestModalProps {
   open: boolean;
@@ -33,6 +36,8 @@ export default function EditRequestModal({
   const [extractors, setExtractors] = useState<[string, string][]>(
     Object.entries(draft.extractors || {})
   );
+  const [invalidExtractors, setInvalidExtractors] = useState<number[]>([]);
+
 
   // Sync header key-value pairs back to the draft object
   useEffect(() => {
@@ -114,12 +119,20 @@ export default function EditRequestModal({
 
           {/* Request body input with JSON validation */}
           <div className="space-y-1">
-            <Textarea
+            <Editor
               value={draft.body ?? ""}
-              onChange={(e) => updateField("body", e.target.value)}
-              rows={4}
-              placeholder="Request body (JSON)"
-              className={bodyError ? "border-red-500" : ""}
+              onValueChange={(code) => updateField("body", code)}
+              highlight={(code) =>
+                Prism.highlight(code, Prism.languages.json, "json")
+              }
+              padding={12}
+              className={`text-sm font-mono border rounded w-full min-h-[120px] ${
+                bodyError ? "border-red-500" : "border-zinc-300"
+              }`}
+              style={{
+                backgroundColor: "#f8f8f8",
+                fontFamily: "monospace",
+              }}
             />
             {bodyError && <p className="text-sm text-red-500">{bodyError}</p>}
           </div>
@@ -186,7 +199,7 @@ export default function EditRequestModal({
                     setExtractors(updated);
                   }}
                   placeholder="Token Key (e.g. userId)"
-                  className="w-1/3"
+                  className="w-2/5"
                 />
                 <Input
                   value={path}
@@ -195,8 +208,8 @@ export default function EditRequestModal({
                     updated[index][1] = e.target.value;
                     setExtractors(updated);
                   }}
-                  placeholder="JSONPath (e.g. $.id)"
-                  className="w-2/3"
+                  placeholder="e.g. $.id or $.data.token"
+                  className="w-3/5"
                 />
                 <Button
                   variant="ghost"
@@ -240,3 +253,13 @@ export default function EditRequestModal({
     </Dialog>
   );
 }
+
+function isValidJsonPath(path: string): boolean {
+  try {
+    JSONPath({ path, json: { sample: { id: 1 } } });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
