@@ -5,6 +5,7 @@ import EditRequestModal from "@/components/EditRequestModal";
 import type { Integration, ApiRequest } from "@/types/integration";
 import { Pencil, Trash2, ArrowLeft, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import KeyValueEditor from "@/components/KeyValueEditor";
 
 import {
   DndContext,
@@ -30,6 +31,9 @@ export default function IntegrationEditor() {
     "idle" | "saving" | "saved" | "error"
   >("idle");
   const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [runtimeModalOpen, setRuntimeModalOpen] = useState(false);
+  const [runtimeValues, setRuntimeValues] = useState<[string, string][]>([]);
+
   const navigate = useNavigate();
 
   const handleEditRequest = (req: ApiRequest) => setEditingRequest(req);
@@ -93,8 +97,15 @@ export default function IntegrationEditor() {
 
   const handleRunIntegration = async () => {
     if (!integration?.id) return;
+
+    const runtimeMap = Object.fromEntries(
+      runtimeValues.filter(([k]) => k.trim() !== "")
+    );
+
     try {
-      const response = await api.post(`/integrations/${integration.id}/run`);
+      const response = await api.post(`/integrations/${integration.id}/run`, {
+        values: runtimeMap,
+      });
       console.log("Integration run result:", response.data);
     } catch (error) {
       console.error("Error running integration:", error);
@@ -128,6 +139,35 @@ export default function IntegrationEditor() {
           request={editingRequest}
           onSave={handleSaveRequest}
         />
+      )}
+
+      {runtimeModalOpen && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-lg space-y-4">
+            <h2 className="text-lg font-semibold text-zinc-800">
+              Runtime Values
+            </h2>
+            <KeyValueEditor
+              label="Values"
+              pairs={runtimeValues}
+              onChange={setRuntimeValues}
+            />
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                className="border border-zinc-300 text-zinc-700 hover:bg-zinc-100"
+                onClick={() => setRuntimeModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-indigo-600 text-white hover:bg-indigo-700"
+                onClick={() => setRuntimeModalOpen(false)}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       <button
@@ -212,6 +252,13 @@ export default function IntegrationEditor() {
           {saveStatus === "saved" && "✅ Saved"}
           {saveStatus === "error" && "❌ Retry Save"}
           {saveStatus === "idle" && "Save Integration"}
+        </Button>
+
+        <Button
+          onClick={() => setRuntimeModalOpen(true)}
+          className="border border-zinc-300 text-zinc-700 hover:bg-zinc-100 px-4 py-2 rounded-md text-sm cursor-pointer transition"
+        >
+          Provide Runtime Values
         </Button>
 
         <Button

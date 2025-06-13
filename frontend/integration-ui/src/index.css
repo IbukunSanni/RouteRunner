@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @tailwind utilities;
 
+@import "prismjs/themes/prism.css";
+
+
 
 /* 1️⃣ Define raw Shadcn color tokens at the root */
 @layer base {
