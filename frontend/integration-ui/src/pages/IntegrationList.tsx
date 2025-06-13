@@ -47,7 +47,6 @@ export default function IntegrationList() {
           >
             <CardContent className="p-4">
               <h2 className="text-lg font-semibold">{integration.name}</h2>
-              <p className="text-sm text-gray-500">{integration.id}</p>
             </CardContent>
           </Card>
         ))}
