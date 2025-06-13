@@ -12,10 +12,6 @@
 .idea/
 *.sln.docstates
 
-# Frontend node_modules
-frontend/quest-ui/node_modules/
-frontend/quest-ui/.vite/
-frontend/quest-ui/dist/
 
 # Logs and temp files
 *.log
@@ -38,3 +34,46 @@ docker/tmp/
 *.env
 *.env.local
 .env.*
+
+# === Root-level ignores ===
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# === .NET (backend) ===
+/backend/**/bin/
+/backend/**/obj/
+/backend/**/*.user
+/backend/**/*.suo
+/backend/**/*.vs/
+*.dotCover
+
+# Rider / ReSharper
+.idea/
+*.DoNotCommit/
+resharper/
+
+# === Node/Vite (frontend) ===
+/frontend/integration-ui/node_modules/
+/frontend/integration-ui/dist/
+/frontend/integration-ui/.env*
+/frontend/integration-ui/*.log
+/frontend/integration-ui/npm-debug.log*
+/frontend/integration-ui/yarn-debug.log*
+/frontend/integration-ui/yarn-error.log*
+
+# === Logs and lock files ===
+*.log
+logs/
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# === Optional IDE folders ===
+.vscode/
+*.swp
+*~
+
+# === Optional Docker ===
+docker-compose.override.yml
