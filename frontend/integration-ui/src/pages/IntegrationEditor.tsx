@@ -158,7 +158,10 @@ export default function IntegrationEditor() {
         )}
       </div>
 
-      <Button variant="outline" className="text-sm" onClick={handleAddRequest}>
+      <Button
+        className="border border-zinc-300 text-zinc-700 hover:bg-zinc-100 px-4 py-2 rounded-md text-sm cursor-pointer transition"
+        onClick={handleAddRequest}
+      >
         + Add Request
       </Button>
 
