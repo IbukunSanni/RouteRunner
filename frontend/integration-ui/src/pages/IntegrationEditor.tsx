@@ -158,6 +158,7 @@ export default function IntegrationEditor() {
                 className="p-1 rounded hover:bg-indigo-50 active:bg-indigo-100 transition cursor-pointer"
                 onClick={() => handleEditRequest(req)}
               >
+                
                 <Pencil
                   size={20}
                   className="text-zinc-600 hover:text-indigo-600 transition"
