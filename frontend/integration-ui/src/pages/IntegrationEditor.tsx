@@ -30,8 +30,8 @@ export default function IntegrationEditor() {
     "idle" | "saving" | "saved" | "error"
   >("idle");
   const [unsavedChanges, setUnsavedChanges] = useState(false);
-
   const navigate = useNavigate();
+
   const handleEditRequest = (req: ApiRequest) => setEditingRequest(req);
 
   const handleSaveRequest = (updated: ApiRequest) => {
@@ -54,11 +54,12 @@ export default function IntegrationEditor() {
         requests: prev.requests.filter((r) => r.id !== requestId),
       };
     });
+    setUnsavedChanges(true);
+    setSaveStatus("idle");
   };
 
   const handleAddRequest = () => {
     if (!integration) return;
-
     const newRequest: ApiRequest = {
       id: crypto.randomUUID(),
       name: "",
@@ -68,31 +69,30 @@ export default function IntegrationEditor() {
       body: "",
       extractors: {},
     };
-
-    const updated = {
+    setIntegration({
       ...integration,
       requests: [...integration.requests, newRequest],
-    };
-
-    setIntegration(updated);
+    });
     setEditingRequest(newRequest);
+    setUnsavedChanges(true);
+    setSaveStatus("idle");
   };
 
   const handleSaveIntegration = async () => {
     if (!integration) return;
-
+    setSaveStatus("saving");
     try {
       await api.put(`/integrations/${integration.id}`, integration);
-      alert("Integration saved successfully!");
+      setSaveStatus("saved");
+      setUnsavedChanges(false);
     } catch (err) {
       console.error("Failed to save integration", err);
-      alert("Failed to save integration. See console.");
+      setSaveStatus("error");
     }
   };
 
   const handleRunIntegration = async () => {
     if (!integration?.id) return;
-
     try {
       const response = await api.post(`/integrations/${integration.id}/run`);
       console.log("Integration run result:", response.data);
@@ -142,6 +142,22 @@ export default function IntegrationEditor() {
         Editing Integration: {integration.name}
       </h1>
 
+      {/* Save status */}
+      <div className="text-sm text-zinc-600">
+        {unsavedChanges && saveStatus === "idle" && (
+          <span className="text-orange-500">Unsaved changes</span>
+        )}
+        {saveStatus === "saving" && (
+          <span className="text-blue-500">Saving...</span>
+        )}
+        {saveStatus === "saved" && (
+          <span className="text-green-600">All changes saved</span>
+        )}
+        {saveStatus === "error" && (
+          <span className="text-red-500">Save failed</span>
+        )}
+      </div>
+
       <Button variant="outline" className="text-sm" onClick={handleAddRequest}>
         + Add Request
       </Button>
@@ -163,6 +179,8 @@ export default function IntegrationEditor() {
               newIndex
             );
             setIntegration({ ...integration, requests: reordered });
+            setUnsavedChanges(true);
+            setSaveStatus("idle");
           }
         }}
       >
@@ -182,22 +200,16 @@ export default function IntegrationEditor() {
       </DndContext>
 
       <div className="flex items-center justify-between mt-4">
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            className="text-sm"
-            onClick={handleAddRequest}
-          >
-            + Add Request
-          </Button>
-
-          <Button
-            className="bg-indigo-600 text-white hover:bg-indigo-700"
-            onClick={handleSaveIntegration}
-          >
-            Save Integration
-          </Button>
-        </div>
+        <Button
+          className="bg-indigo-600 text-white hover:bg-indigo-700"
+          onClick={handleSaveIntegration}
+          disabled={saveStatus === "saving"}
+        >
+          {saveStatus === "saving" && "Saving..."}
+          {saveStatus === "saved" && "✅ Saved"}
+          {saveStatus === "error" && "❌ Retry Save"}
+          {saveStatus === "idle" && "Save Integration"}
+        </Button>
 
         <Button
           className="cursor-pointer bg-green-600 text-white hover:bg-green-700 font-semibold px-5 py-2 flex items-center gap-2"
