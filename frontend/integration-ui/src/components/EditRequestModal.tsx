@@ -83,6 +83,13 @@ export default function EditRequestModal({
           <DialogTitle>Edit Request</DialogTitle>
         </DialogHeader>
 
+        <Input
+          value={draft.name ?? ""}
+          onChange={(e) => updateField("name", e.target.value)}
+          placeholder="Request name (e.g. Login)"
+          className="text-sm"
+        />
+
         <div className="space-y-4">
           {/* Method and URL input fields */}
           <div className="flex gap-2">

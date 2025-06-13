@@ -7,6 +7,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { Play } from "lucide-react";
 
 export default function IntegrationEditor() {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +15,28 @@ export default function IntegrationEditor() {
   const [loading, setLoading] = useState(true);
   const [editingRequest, setEditingRequest] = useState<ApiRequest | null>(null);
   const navigate = useNavigate();
+
+  const handleAddRequest = () => {
+    if (!integration) return;
+
+    const newRequest: ApiRequest = {
+      id: crypto.randomUUID(), // or use uuid library
+      name: "",
+      method: "GET",
+      url: "",
+      headers: {},
+      body: "",
+      extractors: {},
+    };
+
+    const updated = {
+      ...integration,
+      requests: [...integration.requests, newRequest],
+    };
+
+    setIntegration(updated);
+    setEditingRequest(newRequest); // open modal immediately
+  };
 
   // Open modal with selected request
   const handleEditRequest = (req: ApiRequest) => setEditingRequest(req);
@@ -48,6 +71,24 @@ export default function IntegrationEditor() {
     } catch (err) {
       console.error("Failed to save integration", err);
       alert("Failed to save integration. See console.");
+    }
+  };
+
+  const handleRunIntegration = async () => {
+    if (!integration?.id) return;
+
+    try {
+      console.log("Running integration...");
+
+      const response = await api.post(`/integrations/${integration.id}/run`);
+
+      // You might show results or status here
+      console.log("Integration run result:", response.data);
+
+      // Optional: show success toast, modal, or mark status in UI
+    } catch (error) {
+      console.error("Error running integration:", error);
+      // Optional: show error message to user
     }
   };
 
@@ -105,34 +146,64 @@ export default function IntegrationEditor() {
                 {req.method}
               </span>
               <span className="text-sm truncate text-gray-800">
-                {req.url || "[No URL]"}
+                <strong>
+                  {req.name?.trim() || req.url || "Untitled Request"}
+                </strong>
               </span>
             </div>
 
             <div className="flex items-center gap-2">
+              {/* Edit Button */}
               <button
-                className="hover:text-indigo-600"
+                className="p-1 rounded hover:bg-indigo-50 active:bg-indigo-100 transition cursor-pointer"
                 onClick={() => handleEditRequest(req)}
               >
-                <Pencil size={16} />
+                <Pencil
+                  size={20}
+                  className="text-zinc-600 hover:text-indigo-600 transition"
+                />
               </button>
+
+              {/* Delete Button */}
               <button
-                className="bg-red-500 text-white p-1 rounded hover:bg-red-600"
+                className="bg-red-500 text-white p-1 rounded hover:bg-red-600 active:bg-red-700 transition cursor-pointer"
                 onClick={() => handleDeleteRequest(req.id)}
               >
-                <Trash2 size={16} />
+                <Trash2 size={20} />
               </button>
             </div>
           </div>
         </div>
       ))}
 
-      <Button
-        className="bg-indigo-600 text-white hover:bg-indigo-700"
-        onClick={handleSaveIntegration}
-      >
-        Save Integration
-      </Button>
+      <div className="flex items-center justify-between mt-4">
+        {/* Left buttons */}
+        <div className="flex gap-4">
+          <Button
+            variant="outline"
+            className="text-sm"
+            onClick={handleAddRequest}
+          >
+            + Add Request
+          </Button>
+
+          <Button
+            className="bg-indigo-600 text-white hover:bg-indigo-700"
+            onClick={handleSaveIntegration}
+          >
+            Save Integration
+          </Button>
+        </div>
+
+        {/* Right button */}
+        <Button
+          className="cursor-pointer bg-green-600 text-white hover:bg-green-700 font-semibold px-5 py-2 flex items-center gap-2"
+          onClick={handleRunIntegration}
+        >
+          <Play size={16} />
+          Run Integration
+        </Button>
+      </div>
     </div>
   );
 }
