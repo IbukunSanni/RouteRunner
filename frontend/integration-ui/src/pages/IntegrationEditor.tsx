@@ -205,42 +205,51 @@ export default function IntegrationEditor() {
         + Add Request
       </Button>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={({ active, over }) => {
-          if (active.id !== over?.id && integration) {
-            const oldIndex = integration.requests.findIndex(
-              (r) => r.id === active.id
-            );
-            const newIndex = integration.requests.findIndex(
-              (r) => r.id === over?.id
-            );
-            const reordered = arrayMove(
-              integration.requests,
-              oldIndex,
-              newIndex
-            );
-            setIntegration({ ...integration, requests: reordered });
-            setUnsavedChanges(true);
-            setSaveStatus("idle");
-          }
-        }}
-      >
-        <SortableContext
-          items={integration.requests.map((r) => r.id)}
-          strategy={verticalListSortingStrategy}
+      {integration.requests.length === 0 ? (
+        <div className="border border-dashed rounded-md p-6 text-center text-zinc-500 bg-zinc-50">
+          <p className="text-lg font-semibold text-zinc-600">No requests yet</p>
+          <p className="text-sm text-zinc-500 mt-1">
+            Start by adding your first request using the button above.
+          </p>
+        </div>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={({ active, over }) => {
+            if (active.id !== over?.id && integration) {
+              const oldIndex = integration.requests.findIndex(
+                (r) => r.id === active.id
+              );
+              const newIndex = integration.requests.findIndex(
+                (r) => r.id === over?.id
+              );
+              const reordered = arrayMove(
+                integration.requests,
+                oldIndex,
+                newIndex
+              );
+              setIntegration({ ...integration, requests: reordered });
+              setUnsavedChanges(true);
+              setSaveStatus("idle");
+            }
+          }}
         >
-          {integration.requests.map((req) => (
-            <SortableRequestCard
-              key={req.id}
-              request={req}
-              onEdit={handleEditRequest}
-              onDelete={handleDeleteRequest}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
+          <SortableContext
+            items={integration.requests.map((r) => r.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {integration.requests.map((req) => (
+              <SortableRequestCard
+                key={req.id}
+                request={req}
+                onEdit={handleEditRequest}
+                onDelete={handleDeleteRequest}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+      )}
 
       <div className="flex items-center justify-between mt-4">
         <Button
