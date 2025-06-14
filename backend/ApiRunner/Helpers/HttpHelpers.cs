@@ -26,8 +26,6 @@ namespace ApiRunner.Helpers
             }
         }
 
-
-
     public static class HttpHelpers
     {
         /// <summary>
