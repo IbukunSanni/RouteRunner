@@ -71,6 +71,7 @@ namespace ApiRunner.Controllers
         {
             var integration = FakeDatabase.Integrations.FirstOrDefault(i => i.Id == id);
             if (integration == null) return NotFound();
+            DebugLogger.Enabled = false;
 
             var values = runRequest?.Values ?? new();
             DebugLogger.Log("Runtime Values:");
@@ -82,68 +83,48 @@ namespace ApiRunner.Controllers
 
             var results = new List<RunResult>();
 
+            Console.WriteLine($"[INFO] Starting integration run for ID: {id}");
+
             foreach (var req in integration.Requests)
             {
-                var url = Helpers.HttpHelpers.ApplyPlaceholders(req.Url, values);
+                var url = ApplyPlaceholders(req.Url, values);
                 var method = new HttpMethod(req.Method.ToUpper());
                 var message = new HttpRequestMessage(method, url);
 
-                // Add headers
                 foreach (var header in req.Headers ?? new())
                 {
                     var headerValue = ApplyPlaceholders(header.Value, values);
                     message.Headers.TryAddWithoutValidation(header.Key, headerValue);
                 }
 
-                // Add body if applicable
                 if (!string.IsNullOrWhiteSpace(req.Body) && method != HttpMethod.Get)
                 {
                     var resolvedBody = ApplyPlaceholders(req.Body, values);
                     message.Content = new StringContent(resolvedBody, Encoding.UTF8, "application/json");
                 }
 
-
-                // Run request
+                Console.WriteLine($"[INFO] Running {req.Method.ToUpper()} {url}");
                 var stopwatch = Stopwatch.StartNew();
+
                 HttpResponseMessage response;
                 string responseBody;
 
                 try
                 {
-                    // 🔍 LOG REQUEST BEFORE SENDING
-                    DebugLogger.LogSeparator("Sending Request");
-
-                    DebugLogger.Log($"Method: {message.Method}");
-                    DebugLogger.Log($"URL: {message.RequestUri}");
-
-                    DebugLogger.Log("Headers:");
-                    foreach (var header in message.Headers)
-                    {
-                        DebugLogger.Log($"  {header.Key}: {string.Join(", ", header.Value)}");
-                    }
-
-                    if (message.Content != null)
-                    {
-                        foreach (var header in message.Content.Headers)
-                        {
-                            DebugLogger.Log($"  {header.Key}: {string.Join(", ", header.Value)}");
-                        }
-
-                        string requestBody = await message.Content.ReadAsStringAsync();
-                        DebugLogger.Log("Body:");
-                        DebugLogger.Log(requestBody);
-                    }
-
                     response = await httpClient.SendAsync(message);
                     responseBody = await response.Content.ReadAsStringAsync();
+                    stopwatch.Stop();
 
+                    Console.WriteLine($"[INFO] {req.Method.ToUpper()} {url} - {(int)response.StatusCode} {response.StatusCode} in {stopwatch.ElapsedMilliseconds}ms");
                 }
                 catch (Exception ex)
                 {
                     stopwatch.Stop();
+                    Console.WriteLine($"[ERROR] {req.Method.ToUpper()} {url} failed: {ex.Message}");
+
                     results.Add(new RunResult
                     {
-                        Url = req.Url,
+                        Url = url,
                         Method = req.Method,
                         StatusCode = 0,
                         DurationMs = stopwatch.ElapsedMilliseconds,
@@ -152,11 +133,17 @@ namespace ApiRunner.Controllers
                     });
                     continue;
                 }
-                stopwatch.Stop();
-                // Extract values via JSONPath
+
                 if (req.Extractors != null && req.Extractors.Any())
                 {
-                    ExtractValuesFromResponse(responseBody, req.Extractors, values);
+                    try
+                    {
+                        ExtractValuesFromResponse(responseBody, req.Extractors, values);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[ERROR] Failed to extract values from {url}: {ex.Message}");
+                    }
                 }
 
                 results.Add(new RunResult
@@ -168,8 +155,9 @@ namespace ApiRunner.Controllers
                     ResponseBody = TryPrettyPrintJson(responseBody),
                     IsSuccess = response.IsSuccessStatusCode
                 });
-
             }
+
+            Console.WriteLine($"[INFO] Finished integration run.");
 
             return Ok(results);
         }
