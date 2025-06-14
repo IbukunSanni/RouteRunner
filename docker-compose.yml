@@ -6,6 +6,8 @@ services:
       context: ./backend/ApiRunner
     ports:
       - "5088:8080"  # internal port stays 80 (ASP.NET default)
+    environment:
+      - EnableSwagger=true
 
   frontend:
     build:
@@ -14,3 +16,4 @@ services:
       - "3000:80"
     depends_on:
       - backend
+  

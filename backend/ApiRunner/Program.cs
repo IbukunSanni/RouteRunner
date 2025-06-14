@@ -24,12 +24,12 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Use Swagger only in development
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || builder.Configuration["EnableSwagger"] == "true")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseCors("AllowFrontend");
 app.UseAuthorization();
