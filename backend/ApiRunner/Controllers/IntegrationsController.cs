@@ -100,8 +100,31 @@ namespace ApiRunner.Controllers
                 if (!string.IsNullOrWhiteSpace(req.Body) && method != HttpMethod.Get)
                 {
                     var resolvedBody = ApplyPlaceholders(req.Body, values);
-                    message.Content = new StringContent(resolvedBody, Encoding.UTF8, "application/json");
+
+                    // 🔥 Validate that it's valid JSON
+                    try
+                    {
+                        JsonDocument.Parse(resolvedBody); // Throws if not valid
+                        message.Content = new StringContent(resolvedBody, Encoding.UTF8, "application/json");
+                    }
+                    catch (JsonException jsonEx)
+                    {
+
+                        Console.WriteLine($"[ERROR] Invalid JSON in request body: {jsonEx.Message}");
+
+                        results.Add(new RunResult
+                        {
+                            Url = url,
+                            Method = req.Method,
+                            StatusCode = 0,
+                            DurationMs = 0,
+                            ResponseBody = $"Error: {jsonEx.Message}",
+                            IsSuccess = false
+                        });
+                        continue; // skip to next request
+                    }
                 }
+
 
                 Console.WriteLine($"[INFO] Running {req.Method.ToUpper()} {url}");
                 var stopwatch = Stopwatch.StartNew();
@@ -111,6 +134,7 @@ namespace ApiRunner.Controllers
 
                 try
                 {
+
                     response = await httpClient.SendAsync(message);
                     responseBody = await response.Content.ReadAsStringAsync();
                     stopwatch.Stop();
