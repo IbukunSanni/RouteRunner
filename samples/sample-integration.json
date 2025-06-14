@@ -1,0 +1,46 @@
+{
+  "name": "Create User and Verify Persistence",
+  "requests": [
+    {
+      "id": "createUser",
+      "name": "Create User",
+      "method": "POST",
+      "url": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{ \"name\": \"Ibukun\", \"avatar\": \"https://i.pravatar.cc/150?u=ibukun\", \"age\": \"27\" }",
+      "extractors": {
+        "userId": "$.id"
+      }
+    },
+    {
+      "id": "getAllUsers",
+      "name": "Get All Users",
+      "method": "GET",
+      "url": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users",
+      "headers": {}
+    },
+    {
+      "id": "getCreatedUser",
+      "name": "Get Created User by ID",
+      "method": "GET",
+      "url": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users/{{userId}}",
+      "headers": {}
+    },
+    {
+      "id": "deleteUser2",
+      "name": "Delete Hardcoded User ID 2",
+      "method": "DELETE",
+      "url": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users/2",
+      "headers": {}
+    },
+    {
+      "id": "regetCreatedUser",
+      "name": "Re-Check Created User by ID",
+      "method": "GET",
+      "url": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users/{{userId}}",
+      "headers": {}
+    }
+  ]
+}
