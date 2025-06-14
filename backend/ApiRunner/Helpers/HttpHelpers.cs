@@ -4,6 +4,30 @@ using Newtonsoft.Json.Linq;
 
 namespace ApiRunner.Helpers
 {
+    public static class DebugLogger
+        {
+            // Toggle this flag to turn logging on/off
+            public static bool Enabled { get; set; } = true;
+
+            public static void Log(string message)
+            {
+                if (Enabled)
+                {
+                    Console.WriteLine(message);
+                }
+            }
+
+            public static void LogSeparator(string label = "")
+            {
+                if (Enabled)
+                {
+                    Console.WriteLine($"\n=== {label} ===");
+                }
+            }
+        }
+
+
+
     public static class HttpHelpers
     {
         /// <summary>
@@ -80,5 +104,6 @@ namespace ApiRunner.Helpers
                 Console.WriteLine($"Failed to parse response body: {ex.Message}");
             }
         }
+
     }
 }

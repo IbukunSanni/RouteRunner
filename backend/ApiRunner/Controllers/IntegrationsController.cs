@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using static ApiRunner.Helpers.HttpHelpers;
+using ApiRunner.Helpers;
 
 
 namespace ApiRunner.Controllers
@@ -102,6 +103,30 @@ namespace ApiRunner.Controllers
 
                 try
                 {
+                    // 🔍 LOG REQUEST BEFORE SENDING
+                    DebugLogger.LogSeparator("Sending Request");
+
+                    DebugLogger.Log($"Method: {message.Method}");
+                    DebugLogger.Log($"URL: {message.RequestUri}");
+
+                    DebugLogger.Log("Headers:");
+                    foreach (var header in message.Headers)
+                    {
+                        DebugLogger.Log($"  {header.Key}: {string.Join(", ", header.Value)}");
+                    }
+
+                    if (message.Content != null)
+                    {
+                        foreach (var header in message.Content.Headers)
+                        {
+                            DebugLogger.Log($"  {header.Key}: {string.Join(", ", header.Value)}");
+                        }
+
+                        string requestBody = await message.Content.ReadAsStringAsync();
+                        DebugLogger.Log("Body:");
+                        DebugLogger.Log(requestBody);
+                    }
+
                     response = await httpClient.SendAsync(message);
                     responseBody = await response.Content.ReadAsStringAsync();
 

@@ -95,6 +95,24 @@ export default function IntegrationEditor() {
     }
   };
 
+  const handleDeleteIntegration = async () => {
+    if (!integration) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete the integration "${integration.name}"? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await api.delete(`/integrations/${integration.id}`);
+      navigate("/"); // Go back to list after deletion
+    } catch (err) {
+      console.error("Failed to delete integration", err);
+      alert("Failed to delete integration. See console for details.");
+    }
+  };
+
   const handleRunIntegration = async () => {
     if (!integration?.id) return;
 
@@ -178,7 +196,6 @@ export default function IntegrationEditor() {
         Back to Integrations
       </button>
 
-      
       <div className="flex items-center gap-2">
         <Input
           className="text-2xl font-bold text-indigo-600 border-none focus:ring-0 focus:outline-none w-auto"
@@ -190,28 +207,34 @@ export default function IntegrationEditor() {
         <span className="text-zinc-400 text-sm">← click to rename</span>
       </div>
 
-      {/* Save status */}
-      <div className="text-sm text-zinc-600">
-        {unsavedChanges && saveStatus === "idle" && (
-          <span className="text-orange-500">Unsaved changes</span>
-        )}
-        {saveStatus === "saving" && (
-          <span className="text-blue-500">Saving...</span>
-        )}
-        {saveStatus === "saved" && (
-          <span className="text-green-600">All changes saved</span>
-        )}
-        {saveStatus === "error" && (
-          <span className="text-red-500">Save failed</span>
-        )}
-      </div>
+      <div className="flex-col space-y-1">
+        {/* Save status */}
+        <div className="text-sm text-zinc-600">
+          {unsavedChanges && saveStatus === "idle" && (
+            <span className="text-orange-500">Unsaved changes</span>
+          )}
+          {saveStatus === "saving" && (
+            <span className="text-blue-500">Saving...</span>
+          )}
+          {saveStatus === "saved" && (
+            <span className="text-green-600">All changes saved</span>
+          )}
+          {saveStatus === "error" && (
+            <span className="text-red-500">Save failed</span>
+          )}
+        </div>
 
-      <Button
-        className="border border-zinc-300 text-zinc-700 hover:bg-zinc-100 px-4 py-2 rounded-md text-sm cursor-pointer transition"
-        onClick={handleAddRequest}
-      >
-        + Add Request
-      </Button>
+        <Button
+          className="bg-indigo-600 text-white hover:bg-indigo-700"
+          onClick={handleSaveIntegration}
+          disabled={saveStatus === "saving"}
+        >
+          {saveStatus === "saving" && "Saving..."}
+          {saveStatus === "saved" && "✅ Saved"}
+          {saveStatus === "error" && "❌ Retry Save"}
+          {saveStatus === "idle" && "Save Integration"}
+        </Button>
+      </div>
 
       {integration.requests.length === 0 ? (
         <div className="border border-dashed rounded-md p-6 text-center text-zinc-500 bg-zinc-50">
@@ -261,14 +284,10 @@ export default function IntegrationEditor() {
 
       <div className="flex items-center justify-between mt-4">
         <Button
-          className="bg-indigo-600 text-white hover:bg-indigo-700"
-          onClick={handleSaveIntegration}
-          disabled={saveStatus === "saving"}
+          className="border border-zinc-300 text-zinc-700 hover:bg-zinc-100 px-4 py-2 rounded-md text-sm cursor-pointer transition"
+          onClick={handleAddRequest}
         >
-          {saveStatus === "saving" && "Saving..."}
-          {saveStatus === "saved" && "✅ Saved"}
-          {saveStatus === "error" && "❌ Retry Save"}
-          {saveStatus === "idle" && "Save Integration"}
+          + Add Request
         </Button>
 
         <Button
@@ -284,6 +303,19 @@ export default function IntegrationEditor() {
         >
           <Play size={16} />
           Run Integration
+        </Button>
+      </div>
+
+      <div className="mt-10 border-t pt-6 border-red-200">
+        <h2 className="text-red-600 text-lg font-semibold">Danger Zone</h2>
+        <p className="text-sm text-red-500 mt-1">
+          Deleting this integration is permanent and cannot be undone.
+        </p>
+        <Button
+          onClick={handleDeleteIntegration}
+          className="cursor-pointer mt-3 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded"
+        >
+          Delete Integration
         </Button>
       </div>
     </div>

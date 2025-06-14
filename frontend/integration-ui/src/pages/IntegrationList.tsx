@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { api } from "@/api/client";
 import { Button } from "@/components/ui/button"; // Shadcn
 import { Card, CardContent } from "@/components/ui/card"; // Shadcn
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface Integration {
   id: string;
@@ -13,6 +20,8 @@ export default function IntegrationList() {
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     api
@@ -23,11 +32,19 @@ export default function IntegrationList() {
   }, []);
 
   const createNewIntegration = async () => {
-    const res = await api.post("/integrations", {
-      name: "Untitled Integration",
-      requests: [],
-    });
-    navigate(`/integrations/${res.data.id}`);
+    if (!newName.trim()) return;
+
+    try {
+      const res = await api.post("/integrations", {
+        name: newName,
+        requests: [],
+      });
+      setShowModal(false);
+      setNewName("");
+      navigate(`/integrations/${res.data.id}`);
+    } catch (err) {
+      console.error("Failed to create integration", err);
+    }
   };
 
   return (
@@ -37,7 +54,7 @@ export default function IntegrationList() {
           Your Integrations
         </h1>
         <Button
-          onClick={createNewIntegration}
+          onClick={() => setShowModal(true)}
           className="cursor-pointer bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition"
         >
           + New Integration
@@ -59,6 +76,39 @@ export default function IntegrationList() {
           </Card>
         ))}
       </div>
+
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>Name Your Integration</DialogTitle>
+          </DialogHeader>
+
+          <Input
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="e.g. User Auth Flow"
+          />
+
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              className="bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-100 px-4 py-2 rounded-md text-sm transition"
+              onClick={() => {
+                setNewName("");
+                setShowModal(false);
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-md text-sm transition"
+              onClick={createNewIntegration}
+            >
+              Create
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
