@@ -19,11 +19,28 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 - Fully Dockerized for easy setup
 
 ---
+## Demo
+
+Here’s a quick look at PostmanLite in action:
+
+*Exploring the site*
+![Exploring](media/navigation.gif)
+
+*List of ALL Integrations*
+![List of All Integrations](media/integrations_list.png)
+
+*List of All Requests in an Integration*
+![List of All Requests in an Integration](media/integrations_edit.png)
+
+---
+<!-- Add more as needed -->
+
+> All media is stored in the `media/` folder.
 
 ## Project Structure
 
 ```
-valsoft-api-runner/
+PostmanLite/
 ├── backend/              # .NET Core 9 API
 │   ├── ApiRunner/    # Controllers, Helpers, Models and Program.cs
 │   ├── ApiRunner.Tests/  # Unit + Integration Tests
