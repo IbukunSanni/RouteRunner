@@ -33,6 +33,7 @@ export default function IntegrationEditor() {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [runtimeModalOpen, setRuntimeModalOpen] = useState(false);
   const [runtimeValues, setRuntimeValues] = useState<[string, string][]>([]);
+  const [isRunning, setIsRunning] = useState(false);
 
   const navigate = useNavigate();
 
@@ -115,18 +116,17 @@ export default function IntegrationEditor() {
 
   const handleRunIntegration = async () => {
     if (!integration?.id) return;
-
-    const runtimeMap = Object.fromEntries(
-      runtimeValues.filter(([k]) => k.trim() !== "")
-    );
+    setIsRunning(true);
 
     try {
-      const response = await api.post(`/integrations/${integration.id}/run`, {
-        values: runtimeMap,
-      });
-      console.log("Integration run result:", response.data);
+      const response = await api.post(`/integrations/${integration.id}/run`);
+      console.log("Run result:", response.data);
+      // Optional: Show response in modal or drawer
     } catch (error) {
-      console.error("Error running integration:", error);
+      console.error("Run error:", error);
+      alert("Failed to run integration. See console.");
+    } finally {
+      setIsRunning(false); // Re-enable button
     }
   };
 
@@ -298,11 +298,14 @@ export default function IntegrationEditor() {
         </Button>
 
         <Button
-          className="cursor-pointer bg-green-600 text-white hover:bg-green-700 font-semibold px-5 py-2 flex items-center gap-2"
           onClick={handleRunIntegration}
+          disabled={isRunning}
+          className={`cursor-pointer bg-green-600 text-white font-semibold px-5 py-2 flex items-center gap-2 ${
+            isRunning ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"
+          }`}
         >
           <Play size={16} />
-          Run Integration
+          {isRunning ? "Running..." : "Run Integration"}
         </Button>
       </div>
 
