@@ -20,13 +20,12 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 valsoft-api-runner/
 ├── backend/              # .NET Core 9 API
-│   ├── ApiRunner.Api/    # Controllers and Program.cs
-│   ├── ApiRunner.Core/   # Models and Helpers
+│   ├── ApiRunner/    # Controllers, Helpers, Models and Program.cs
 │   ├── ApiRunner.Tests/  # Unit + Integration Tests
 ├── frontend/             # React + Tailwind UI
 │   └── integration-ui/
@@ -37,13 +36,13 @@ valsoft-api-runner/
 
 ---
 
-## 🐳 Getting Started with Docker
+## Getting Started with Docker
 
 > ✅ Prerequisites: Docker installed
 
 ```bash
-git clone <your-repo-url>
-cd valsoft-api-runner
+git clone https://github.com/IbukunSanni/PostmanLite.git
+cd PostmanLite
 docker-compose up --build
 ```
 
@@ -53,7 +52,7 @@ docker-compose up --build
 
 ---
 
-## 🧪 Run Tests
+## Run Tests
 
 ```bash
 cd backend/ApiRunner.Tests
@@ -62,13 +61,13 @@ dotnet test
 
 ---
 
-## 📝 Sample Integration
+## Sample Integration
 
 You can import a sample integration from `samples/sample-integration.json` or manually create one via the UI.
 
 ---
 
-## 📖 API Docs (Swagger)
+## API Docs (Swagger)
 
 When running, visit:
 
@@ -80,15 +79,12 @@ To explore the endpoints interactively.
 
 ---
 
-## 🔐 Auth-Ready
 
-While no authentication is enforced yet, the codebase is ready to plug in auth later.
+## What is to come
 
----
-
-## 💡 What's Left (Optional)
-
-- Console UI for real-time run feedback
+- Authnetication
+- Peristent Database
+- Deployment
 - Import OpenAPI specs
 - OAuth 2.0 flow support
 - Retry & conditional logic
