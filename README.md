@@ -31,13 +31,11 @@ Here’s a quick look at PostmanLite in action:
 
 *List of All Requests in an Integration*
 ![List of All Requests in an Integration](media/integrations_edit.png)
-*Running an integration and seeing the results live*
 
 ---
 <!-- Add more as needed -->
 
-> All media is stored in the `assets/screenshots/` folder.
-
+> All media is stored in the `media/` folder.
 
 ## Project Structure
 
