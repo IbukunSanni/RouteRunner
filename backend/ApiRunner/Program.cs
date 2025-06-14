@@ -1,16 +1,21 @@
+using ApiRunner.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add CORS policy
+// Register database (SQLite for simplicity)
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=api-runner.db")); // You can replace with other DBs later
+
+// Enable CORS for your frontend (Vite on port 5173)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy
-                .WithOrigins("http://localhost:5173") // 👈 your Vite dev server
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // your React frontend
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 builder.Services.AddControllers();
@@ -19,15 +24,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Use Swagger only in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// 🔥 Apply CORS
 app.UseCors("AllowFrontend");
-
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();
