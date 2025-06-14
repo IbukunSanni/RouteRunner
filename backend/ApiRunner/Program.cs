@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Register database (SQLite for simplicity)
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=api-runner.db")); // You can replace with other DBs later
+// builder.Services.AddDbContext<AppDbContext>(options =>
+//     options.UseSqlite("Data Source=api-runner.db")); // You can replace with other DBs later
 
 // Enable CORS for your frontend (Vite on port 5173)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // your React frontend
+        policy.WithOrigins("http://localhost:5173","http://localhost:3000") // your React frontend
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

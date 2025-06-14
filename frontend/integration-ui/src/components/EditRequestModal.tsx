@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import type { ApiRequest } from "@/types/integration";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { JSONPath } from "jsonpath-plus";
 
 interface EditRequestModalProps {
   open: boolean;
@@ -36,7 +35,6 @@ export default function EditRequestModal({
   const [extractors, setExtractors] = useState<[string, string][]>(
     Object.entries(draft.extractors || {})
   );
-  const [invalidExtractors, setInvalidExtractors] = useState<number[]>([]);
 
   // Sync header key-value pairs back to the draft object
   useEffect(() => {
@@ -56,14 +54,7 @@ export default function EditRequestModal({
   };
 
   // Utility to update a key-value object like extractors
-  const updateKVField = (
-    obj: Record<string, string>,
-    setter: (val: Record<string, string>) => void,
-    key: string,
-    value: string
-  ) => {
-    setter({ ...obj, [key]: value });
-  };
+ 
 
   // Validate and save the request data
   const handleSave = () => {
@@ -278,11 +269,4 @@ export default function EditRequestModal({
   );
 }
 
-function isValidJsonPath(path: string): boolean {
-  try {
-    JSONPath({ path, json: { sample: { id: 1 } } });
-    return true;
-  } catch {
-    return false;
-  }
-}
+

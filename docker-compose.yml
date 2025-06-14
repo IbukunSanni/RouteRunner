@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend/ApiRunner
+    ports:
+      - "5088:8080"  # internal port stays 80 (ASP.NET default)
+
+  frontend:
+    build:
+      context: ./frontend/integration-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
