@@ -40,7 +40,7 @@ Here’s a quick look at PostmanLite in action:
 ## Project Structure
 
 ```
-valsoft-api-runner/
+PostmanLite/
 ├── backend/              # .NET Core 9 API
 │   ├── ApiRunner/    # Controllers, Helpers, Models and Program.cs
 │   ├── ApiRunner.Tests/  # Unit + Integration Tests
