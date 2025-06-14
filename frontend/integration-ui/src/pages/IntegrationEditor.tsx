@@ -34,6 +34,7 @@ export default function IntegrationEditor() {
   const [runtimeModalOpen, setRuntimeModalOpen] = useState(false);
   const [runtimeValues, setRuntimeValues] = useState<[string, string][]>([]);
   const [isRunning, setIsRunning] = useState(false);
+  const [runResults, setRunResults] = useState<RunResult[] | null>(null);
 
   const navigate = useNavigate();
 
@@ -117,16 +118,24 @@ export default function IntegrationEditor() {
   const handleRunIntegration = async () => {
     if (!integration?.id) return;
     setIsRunning(true);
+    setRunResults(null); // Clear previous results
+
+    // Convert runtime key-value pairs to object
+    const valuesObject = Object.fromEntries(
+      runtimeValues.filter(([k]) => k.trim() !== "")
+    );
 
     try {
-      const response = await api.post(`/integrations/${integration.id}/run`);
-      console.log("Run result:", response.data);
-      // Optional: Show response in modal or drawer
-    } catch (error) {
-      console.error("Run error:", error);
-      alert("Failed to run integration. See console.");
+      const res = await api.post(`/integrations/${integration.id}/run`, {
+        values: valuesObject, // ✅ Send runtime values to backend
+      });
+
+      setRunResults(res.data); // ✅ Save response (array of RunResult objects)
+    } catch (err) {
+      console.error("Failed to run integration", err);
+      alert("Integration run failed. See console.");
     } finally {
-      setIsRunning(false); // Re-enable button
+      setIsRunning(false); // ✅ Re-enable run button
     }
   };
 
@@ -308,6 +317,46 @@ export default function IntegrationEditor() {
           {isRunning ? "Running..." : "Run Integration"}
         </Button>
       </div>
+
+      {runResults && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-green-700 mb-4">
+            Run Results
+          </h2>
+          <div className="space-y-4">
+            {runResults.map((result, idx) => (
+              <div
+                key={idx}
+                className="border rounded p-4 bg-gray-50 shadow-sm"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-medium">
+                      <span className="text-indigo-600">{result.method}</span>{" "}
+                      <span className="text-gray-800">{result.url}</span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Status:{" "}
+                      <span
+                        className={
+                          result.isSuccess ? "text-green-600" : "text-red-600"
+                        }
+                      >
+                        {result.statusCode}
+                      </span>{" "}
+                      | Time: {result.durationMs}ms
+                    </p>
+                  </div>
+                </div>
+
+                <pre className="bg-white p-3 mt-3 rounded text-sm text-gray-800 overflow-auto max-h-72">
+                  {result.responseBody}
+                </pre>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-10 border-t pt-6 border-red-200">
         <h2 className="text-red-600 text-lg font-semibold">Danger Zone</h2>

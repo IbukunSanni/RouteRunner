@@ -73,6 +73,13 @@ namespace ApiRunner.Controllers
             if (integration == null) return NotFound();
 
             var values = runRequest?.Values ?? new();
+            DebugLogger.Log("Runtime Values:");
+
+            foreach (var kv in values)
+            {
+                DebugLogger.Log($"  {kv.Key}: {kv.Value}");
+            }
+
             var results = new List<RunResult>();
 
             foreach (var req in integration.Requests)
