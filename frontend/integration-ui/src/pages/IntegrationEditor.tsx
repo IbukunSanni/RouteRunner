@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "@/api/client";
 import EditRequestModal from "@/components/EditRequestModal";
-import type { Integration, ApiRequest } from "@/types/integration";
+import type { Integration, ApiRequest, RunResult } from "@/types/integration";
 import { Pencil, Trash2, ArrowLeft, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KeyValueEditor from "@/components/KeyValueEditor";
@@ -308,9 +308,11 @@ export default function IntegrationEditor() {
 
         <Button
           onClick={handleRunIntegration}
-          disabled={isRunning}
+          disabled={isRunning || (integration?.requests.length ?? 0) === 0}
           className={`cursor-pointer bg-green-600 text-white font-semibold px-5 py-2 flex items-center gap-2 ${
-            isRunning ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"
+            isRunning || (integration?.requests.length ?? 0) === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-green-700"
           }`}
         >
           <Play size={16} />

@@ -13,3 +13,14 @@ export interface Integration {
   name: string;
   requests: ApiRequest[];
 }
+
+// types/runResult.ts or in integration.ts if shared
+export interface RunResult {
+  url: string;
+  method: string;
+  statusCode: number;
+  durationMs: number;
+  responseBody: string;
+  isSuccess: boolean;
+}
+
