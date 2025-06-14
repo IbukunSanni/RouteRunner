@@ -19,6 +19,21 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 - Fully Dockerized for easy setup
 
 ---
+## Demo
+
+Here’s a quick look at PostmanLite in action:
+*Creating a new integration with chained requests*
+![Create Integration](media/integrations_list.png)
+
+
+![Run Integration](assets/screenshots/run-integration.gif)
+*Running an integration and seeing the results live*
+
+---
+<!-- Add more as needed -->
+
+> All media is stored in the `assets/screenshots/` folder.
+
 
 ## Project Structure
 
