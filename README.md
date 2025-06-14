@@ -22,10 +22,14 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 ## Demo
 
 Here’s a quick look at PostmanLite in action:
-*Creating a new integration with chained requests*
+
+*Exploring the site*
+![Exploring](media/navigation.gif)
+
+*List of ALL Integrations*
 ![List of All Integrations](media/integrations_list.png)
 
-
+*List of All Requests in an Integration*
 ![List of All Requests in an Integration](media/integrations_edit.png)
 *Running an integration and seeing the results live*
 
