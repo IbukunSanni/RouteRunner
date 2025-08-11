@@ -1,4 +1,4 @@
-﻿# PostmanLite
+﻿# RouteRunner
 
 A lightweight Postman-like tool to store and run chained API calls in order. Built with **.NET 9** backend and **React + Vite + Tailwind** frontend.
 
@@ -110,3 +110,4 @@ To explore the endpoints interactively.
 ---
 
 Built with ❤️ for the Valsoft 72hr Coding Challenge.
+
