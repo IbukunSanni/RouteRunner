@@ -55,7 +55,7 @@ PostmanLite/
 
 ## Getting Started with Docker
 
-> ✅ Prerequisites: Docker installed
+> ✅ Prerequisites: Docker installed and Docker Desktop running
 
 ```bash
 git clone https://github.com/IbukunSanni/RouteRunner.git
@@ -109,5 +109,6 @@ To explore the endpoints interactively.
 ---
 
 Built with ❤️ for the Valsoft 72hr Coding Challenge.
+
 
 
