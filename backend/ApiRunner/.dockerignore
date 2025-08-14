@@ -1,0 +1,57 @@
+## Ignore Visual Studio and .NET build files
+bin/
+obj/
+out/
+*.user
+*.suo
+*.sln.docstates
+.vs/
+.vscode/
+
+## Ignore test results
+TestResults/
+*.trx
+*.coverage
+
+## Ignore packages
+packages/
+*.nupkg
+
+## Ignore local database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+## Ignore logs
+*.log
+logs/
+
+## Ignore OS files
+.DS_Store
+Thumbs.db
+
+## Ignore git files
+.git/
+.gitignore
+.gitattributes
+
+## Ignore documentation
+README.md
+*.md
+
+## Ignore environment files
+.env
+.env.*
+appsettings.Development.json
+
+## Ignore Docker files
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+## Ignore deployment files
+*.yaml
+*.yml
+deploy/

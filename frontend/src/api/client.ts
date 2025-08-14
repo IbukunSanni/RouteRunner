@@ -2,11 +2,17 @@ import axios from 'axios';
 
 // Determine the base URL based on environment
 const getBaseURL = () => {
+  // Use environment variable if available
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
   // In development, use the proxy or direct backend URL
   if (import.meta.env.DEV) {
     return 'http://localhost:5088';
   }
-  // In production, use relative URLs (same origin)
+  
+  // In production, use relative URLs (same origin) as fallback
   return '';
 };
 

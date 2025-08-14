@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: routerunner-api
+    env: dotnet
+    plan: starter
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/ApiRunner.dll
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: EnableSwagger
+        value: "true"
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: routerunner-frontend
+          property: url
