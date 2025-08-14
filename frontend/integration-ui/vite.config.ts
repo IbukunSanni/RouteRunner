@@ -7,10 +7,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [
     tailwindcss(), 
-    react({
-      // Enable fast refresh for better hot reload
-      fastRefresh: true,
-    })
+    react()
   ],
   resolve: {
     alias: {

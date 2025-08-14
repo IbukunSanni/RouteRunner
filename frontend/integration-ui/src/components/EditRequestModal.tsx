@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
   Dialog,
   DialogContent,
@@ -41,8 +41,11 @@ export default function EditRequestModal({
     const cleanObject = (entries: [string, string][]) =>
       Object.fromEntries(entries.filter(([k]) => k.trim() !== ""));
 
-    updateField("headers", cleanObject(headers));
-    updateField("extractors", cleanObject(extractors));
+    setDraft(prev => ({
+      ...prev,
+      headers: cleanObject(headers),
+      extractors: cleanObject(extractors)
+    }));
   }, [headers, extractors]);
 
   // Generic field updater for draft state
@@ -52,9 +55,6 @@ export default function EditRequestModal({
   ) => {
     setDraft({ ...draft, [key]: value });
   };
-
-  // Utility to update a key-value object like extractors
- 
 
   // Validate and save the request data
   const handleSave = () => {
