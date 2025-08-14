@@ -32,8 +32,8 @@ if not exist "frontend\integration-ui\node_modules" (
     echo.
 )
 
-echo [RouteRunner] Starting backend (.NET API) on http://localhost:5088...
-start "RouteRunner Backend" cmd /k "cd backend\ApiRunner && dotnet run --urls=http://localhost:5088"
+echo [RouteRunner] Starting backend (.NET API) with hot reload on http://localhost:5088...
+start "RouteRunner Backend" cmd /k "cd backend\ApiRunner && dotnet watch run --urls=http://localhost:5088"
 
 timeout /t 3 /nobreak >nul
 
