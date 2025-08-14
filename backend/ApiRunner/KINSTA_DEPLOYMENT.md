@@ -60,9 +60,16 @@ curl http://localhost:8080/api/health
    - Select your repository and branch (usually `main` or `master`)
 
 3. **Configure build settings:**
+
+   ### Option A: Using Docker (Recommended)
    - **Build path**: `backend/ApiRunner`
    - **Dockerfile path**: `backend/ApiRunner/Dockerfile`
    - **Context**: `backend/ApiRunner`
+
+   ### Option B: Using Nixpacks (Alternative)
+   - **Build path**: `backend`
+   - Kinsta will auto-detect the nixpacks.toml file
+   - No Dockerfile path needed
 
 ## Step 4: Configure Environment Variables
 
