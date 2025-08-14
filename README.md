@@ -21,7 +21,7 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 ---
 ## Demo
 
-Here�s a quick look at RouteRunner in action:
+Here's a quick look at RouteRunner in action:
 
 *Exploring the site*
 ![Exploring](media/navigation.gif)
@@ -107,9 +107,6 @@ To explore the endpoints interactively.
 - Retry & conditional logic
 - Save run logs
 
----
-
-Built with ❤️ for the Valsoft 72hr Coding Challenge.
 
 
 
