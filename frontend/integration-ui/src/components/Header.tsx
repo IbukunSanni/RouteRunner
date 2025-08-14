@@ -54,7 +54,7 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
 
           <div className="flex items-center space-x-2">
             <div className="hidden sm:flex items-center space-x-1 text-xs text-indigo-100">
-              <span>v1.0.0</span>
+              <span>v1.5.0</span>
             </div>
           </div>
         </div>

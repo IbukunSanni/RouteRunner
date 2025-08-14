@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "@/api/client";
 import EditRequestModal from "@/components/EditRequestModal";
 import type { Integration, ApiRequest, RunResult } from "@/types/integration";
-import { Pencil, Trash2, ArrowLeft, Play } from "lucide-react";
+import { Pencil, Trash2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import KeyValueEditor from "@/components/KeyValueEditor";
 import { Input } from "@/components/ui/input";
