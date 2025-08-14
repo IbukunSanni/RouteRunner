@@ -1,4 +1,4 @@
-﻿# RouteRunner
+# RouteRunner
 
 A lightweight Postman-like tool to store and run chained API calls in order. Built with **.NET 9** backend and **React + Vite + Tailwind** frontend.
 
@@ -21,7 +21,7 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 ---
 ## Demo
 
-Here’s a quick look at PostmanLite in action:
+Here�s a quick look at RouteRunner in action:
 
 *Exploring the site*
 ![Exploring](media/navigation.gif)
@@ -40,26 +40,26 @@ Here’s a quick look at PostmanLite in action:
 ## Project Structure
 
 ```
-PostmanLite/
-├── backend/              # .NET Core 9 API
-│   ├── ApiRunner/    # Controllers, Helpers, Models and Program.cs
-│   ├── ApiRunner.Tests/  # Unit + Integration Tests
-├── frontend/             # React + Tailwind UI
-│   └── integration-ui/
-├── docker/               # nginx.conf
-├── docker-compose.yml
-└── README.md
+RouteRunner/
++-- backend/              # .NET Core 9 API
+�   +-- ApiRunner/    # Controllers, Helpers, Models and Program.cs
+�   +-- ApiRunner.Tests/  # Unit + Integration Tests
++-- frontend/             # React + Tailwind UI
+�   +-- integration-ui/
++-- docker/               # nginx.conf
++-- docker-compose.yml
++-- README.md
 ```
 
 ---
 
 ## Getting Started with Docker
 
-> ✅ Prerequisites: Docker installed
+> ? Prerequisites: Docker installed
 
 ```bash
-git clone https://github.com/IbukunSanni/PostmanLite.git
-cd PostmanLite
+git clone https://github.com/IbukunSanni/RouteRunner.git
+cd RouteRunner
 docker-compose up --build
 ```
 
@@ -99,8 +99,8 @@ To explore the endpoints interactively.
 
 ## What is to come
 
-- Authnetication
-- Peristent Database
+- Authentication
+- Persistent Database
 - Deployment
 - Import OpenAPI specs
 - OAuth 2.0 flow support
@@ -109,5 +109,5 @@ To explore the endpoints interactively.
 
 ---
 
-Built with ❤️ for the Valsoft 72hr Coding Challenge.
+Built with ?? for the Valsoft 72hr Coding Challenge.
 
