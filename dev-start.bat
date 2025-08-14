@@ -24,11 +24,11 @@ echo [RouteRunner] Prerequisites check passed!
 echo.
 
 REM Install frontend dependencies if needed
-if not exist "frontend\integration-ui\node_modules" (
+if not exist "ui\node_modules" (
     echo [RouteRunner] Installing frontend dependencies...
-    cd frontend\integration-ui
+    cd ui
     npm install
-    cd ..\..
+    cd ..
     echo.
 )
 
@@ -38,7 +38,7 @@ start "RouteRunner Backend" cmd /k "cd backend\ApiRunner && dotnet watch run --u
 timeout /t 3 /nobreak >nul
 
 echo [RouteRunner] Starting frontend (React + Vite) on http://localhost:3000...
-start "RouteRunner Frontend" cmd /k "cd frontend\integration-ui && npm run dev -- --host 0.0.0.0 --port 3000"
+start "RouteRunner Frontend" cmd /k "cd ui && npm run dev -- --host 0.0.0.0 --port 3000"
 
 timeout /t 2 /nobreak >nul
 
