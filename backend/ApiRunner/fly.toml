@@ -1,64 +1,22 @@
-# Fly.io configuration for RouteRunner Backend
-app = "routerunner-backend"  # Change this to your unique app name
-primary_region = "iad"  # Change to your preferred region (iad = Ashburn, Virginia)
-kill_signal = "SIGINT"
-kill_timeout = 5
+# fly.toml app configuration file generated for routerunner-backend on 2025-08-14T19:20:29-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'routerunner-backend'
+primary_region = 'iad'
 
 [build]
-  dockerfile = "Dockerfile"
 
-[env]
-  ASPNETCORE_ENVIRONMENT = "Production"
-  DOTNET_RUNNING_IN_CONTAINER = "true"
-  EnableSwagger = "false"
-
-[[services]]
+[http_service]
   internal_port = 8080
-  protocol = "tcp"
-  auto_stop_machines = true
+  force_https = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-
-  [services.concurrency]
-    type = "connections"
-    hard_limit = 25
-    soft_limit = 20
-
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
-    force_https = true
-
-  [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
-
-  [[services.http_checks]]
-    interval = "15s"
-    timeout = "2s"
-    grace_period = "5s"
-    method = "GET"
-    path = "/health"
-    protocol = "http"
-
-[checks]
-  [checks.health]
-    grace_period = "10s"
-    interval = "30s"
-    method = "GET"
-    path = "/health"
-    port = 8080
-    timeout = "5s"
-    type = "http"
+  processes = ['app']
 
 [[vm]]
-  cpu_kind = "shared"
+  memory = '1gb'
+  cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 256  # Start small, scale up if needed
-
-[deploy]
-  strategy = "rolling"  # or "bluegreen" for zero-downtime deployments
-
-[metrics]
-  port = 8080
-  path = "/metrics"  # If you have metrics endpoint

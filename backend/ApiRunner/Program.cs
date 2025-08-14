@@ -15,19 +15,30 @@ builder.Services.AddCors(options =>
         var allowedOrigins = new List<string>
         {
             "http://localhost:5173",
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "http://localhost:4173" // Vite preview
         };
 
-        // Add production frontend URL from environment variable
+        // Add production frontend URLs from environment variable
         var frontendUrl = builder.Configuration["FRONTEND_URL"];
         if (!string.IsNullOrEmpty(frontendUrl))
         {
-            allowedOrigins.Add(frontendUrl);
+            // Support comma-separated URLs
+            var urls = frontendUrl.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var url in urls)
+            {
+                allowedOrigins.Add(url.Trim());
+            }
         }
 
+        // Common Vercel deployment patterns
+        allowedOrigins.Add("https://routerunner.vercel.app");
+        // Note: For Vercel preview deployments, you'll need to add specific URLs or use SetIsOriginAllowedToAllowWildcardSubdomains
+        
         policy.WithOrigins(allowedOrigins.ToArray())
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials(); // Allow cookies if needed
     });
 });
 
@@ -50,11 +61,10 @@ app.MapControllers();
 
 // Configure port for production deployment (Fly.io, Kinsta, etc.)
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-var urls = new[] { $"http://0.0.0.0:{port}", $"http://[::]:{port}" }; // Support both IPv4 and IPv6
-foreach (var url in urls)
-{
-    app.Urls.Add(url);
-}
+
+// Clear any default URLs and set only one binding
+app.Urls.Clear();
+app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Logger.LogInformation($"Starting application on port {port}");
 app.Run();
