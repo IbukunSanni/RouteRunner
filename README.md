@@ -21,7 +21,7 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 ---
 ## Demo
 
-Hereís a quick look at RouteRunner in action:
+HereÔøΩs a quick look at RouteRunner in action:
 
 *Exploring the site*
 ![Exploring](media/navigation.gif)
@@ -42,10 +42,10 @@ Hereís a quick look at RouteRunner in action:
 ```
 RouteRunner/
 +-- backend/              # .NET Core 9 API
-¶   +-- ApiRunner/    # Controllers, Helpers, Models and Program.cs
-¶   +-- ApiRunner.Tests/  # Unit + Integration Tests
+ÔøΩ   +-- ApiRunner/    # Controllers, Helpers, Models and Program.cs
+ÔøΩ   +-- ApiRunner.Tests/  # Unit + Integration Tests
 +-- frontend/             # React + Tailwind UI
-¶   +-- integration-ui/
+ÔøΩ   +-- integration-ui/
 +-- docker/               # nginx.conf
 +-- docker-compose.yml
 +-- README.md
@@ -55,7 +55,7 @@ RouteRunner/
 
 ## Getting Started with Docker
 
-> ? Prerequisites: Docker installed
+> ‚úÖ Prerequisites: Docker installed and Docker Desktop running
 
 ```bash
 git clone https://github.com/IbukunSanni/RouteRunner.git
@@ -109,5 +109,7 @@ To explore the endpoints interactively.
 
 ---
 
-Built with ?? for the Valsoft 72hr Coding Challenge.
+Built with ‚ù§Ô∏è for the Valsoft 72hr Coding Challenge.
+
+
 
