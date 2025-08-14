@@ -48,8 +48,13 @@ app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
 
-// Configure port for production deployment
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5088";
-app.Urls.Add($"http://0.0.0.0:{port}");
+// Configure port for production deployment (Fly.io, Kinsta, etc.)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+var urls = new[] { $"http://0.0.0.0:{port}", $"http://[::]:{port}" }; // Support both IPv4 and IPv6
+foreach (var url in urls)
+{
+    app.Urls.Add(url);
+}
 
+app.Logger.LogInformation($"Starting application on port {port}");
 app.Run();
