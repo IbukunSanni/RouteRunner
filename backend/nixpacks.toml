@@ -1,45 +1,13 @@
 # Nixpacks configuration for .NET 9 backend deployment on Kinsta
-# This file configures the build and runtime settings for nixpacks
 
 [phases.setup]
-# Specify .NET SDK version
 nixPkgs = ["dotnet-sdk_9"]
 
 [phases.install]
-# Install dependencies
-cmds = [
-    "cd ApiRunner",
-    "dotnet restore"
-]
+cmds = ["cd ApiRunner && dotnet restore"]
 
 [phases.build]
-# Build the application
-cmds = [
-    "cd ApiRunner",
-    "dotnet publish -c Release -o out --no-restore"
-]
+cmds = ["cd ApiRunner && dotnet publish -c Release -o /app/out"]
 
 [start]
-# Start command for the application
-cmd = "cd ApiRunner/out && dotnet ApiRunner.dll"
-
-[variables]
-# Environment variables
-ASPNETCORE_ENVIRONMENT = "Production"
-DOTNET_RUNNING_IN_CONTAINER = "true"
-DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = "false"
-
-# Port configuration (Kinsta will override with PORT env var)
-ASPNETCORE_URLS = "http://+:${PORT:-8080}"
-
-[staticAssets]
-# Serve static files if needed (e.g., for Swagger UI)
-paths = ["/app/wwwroot"]
-
-[healthCheck]
-# Health check configuration
-path = "/health"
-interval = 30
-timeout = 10
-retries = 3
-startPeriod = 40
+cmd = "dotnet /app/out/ApiRunner.dll"
