@@ -41,14 +41,13 @@ Here's a quick look at RouteRunner in action:
 
 ```
 RouteRunner/
-+-- backend/              # .NET Core 9 API
-�   +-- ApiRunner/    # Controllers, Helpers, Models and Program.cs
-�   +-- ApiRunner.Tests/  # Unit + Integration Tests
-+-- frontend/             # React + Tailwind UI
-�   +-- integration-ui/
-+-- docker/               # nginx.conf
-+-- docker-compose.yml
-+-- README.md
+├── backend/              # .NET Core 9 API
+│   ├── ApiRunner/        # Controllers, Helpers, Models and Program.cs
+│   └── ApiRunner.Tests/  # Unit + Integration Tests
+├── frontend/             # React + Tailwind UI
+├── docker/               # nginx.conf
+├── docker-compose.yml
+└── README.md
 ```
 
 ---
@@ -58,7 +57,7 @@ RouteRunner/
 > ✅ Prerequisites: Docker installed and Docker Desktop running
 
 ```bash
-git clone https://github.com/IbukunSanni/RouteRunner.git
+git clone <repository-url>
 cd RouteRunner
 docker-compose up --build
 ```
@@ -97,7 +96,7 @@ To explore the endpoints interactively.
 ---
 
 
-## What is to come
+## What's Coming Next
 
 - Authentication
 - Persistent Database
@@ -106,6 +105,7 @@ To explore the endpoints interactively.
 - OAuth 2.0 flow support
 - Retry & conditional logic
 - Save run logs
+- Enhanced error handling and validation
 
 
 
