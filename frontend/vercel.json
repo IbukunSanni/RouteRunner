@@ -6,8 +6,12 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://your-backend-url.com/api/$1"
+      "source": "/api/:path*",
+      "destination": "https://routerunner-backend.fly.dev/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

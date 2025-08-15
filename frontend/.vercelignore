@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Testing
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Development files
+.env.local
+.env.development
+*.log
+
+# Version control
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Docker
+Dockerfile
+nginx.conf
+
+# IDE
+.vscode/
+.idea/
