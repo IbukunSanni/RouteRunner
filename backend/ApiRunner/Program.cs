@@ -67,4 +67,5 @@ app.Urls.Clear();
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Logger.LogInformation($"Starting application on port {port}");
+app.Logger.LogInformation("Deployment Version: v1.0.1 - Health endpoint enhanced with deployment tracking");
 app.Run();
