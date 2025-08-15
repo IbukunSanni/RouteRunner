@@ -31,14 +31,29 @@ builder.Services.AddCors(options =>
             }
         }
 
-        // Common Vercel deployment patterns
+        // Vercel deployment URLs
         allowedOrigins.Add("https://routerunner.vercel.app");
-        // Note: For Vercel preview deployments, you'll need to add specific URLs or use SetIsOriginAllowedToAllowWildcardSubdomains
+        allowedOrigins.Add("https://route-runner-one.vercel.app");
+        allowedOrigins.Add("https://route-runner-ibukuns-projects-f499c0c8.vercel.app");
+        allowedOrigins.Add("https://route-runner-ibukunsanni-ibukuns-projects-f499c0c8.vercel.app");
+        
+        // Support Vercel preview deployments with wildcard pattern
+        // This allows any subdomain of vercel.app (for preview deployments)
         
         policy.WithOrigins(allowedOrigins.ToArray())
+              .SetIsOriginAllowedToAllowWildcardSubdomains()
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // Allow cookies if needed
+              .AllowCredentials() // Allow cookies if needed
+              .SetIsOriginAllowed(origin => 
+              {
+                  // Allow any Vercel deployment (including preview deployments)
+                  if (origin.Contains(".vercel.app") || origin.Contains("vercel.app"))
+                      return true;
+                  
+                  // Check against the list of allowed origins
+                  return allowedOrigins.Contains(origin);
+              });
     });
 });
 
@@ -67,5 +82,5 @@ app.Urls.Clear();
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Logger.LogInformation($"Starting application on port {port}");
-app.Logger.LogInformation("Deployment Version: v1.0.1 - Health endpoint enhanced with deployment tracking");
+app.Logger.LogInformation("Deployment Version: v1.0.2 - CORS policy fixed for Vercel deployments");
 app.Run();
