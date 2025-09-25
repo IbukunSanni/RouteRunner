@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend/ApiRunner
+      target: development
+    ports:
+      - "5088:5088"
+    volumes:
+      - ./backend/ApiRunner:/src
+      - /src/bin
+      - /src/obj
+    command: dotnet watch run --urls http://0.0.0.0:5088
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - EnableSwagger=true
+
+  frontend:
+    build:
+      context: ./frontend
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 3000
+    environment:
+      - VITE_API_URL=http://localhost:5088

@@ -1,4 +1,20 @@
-# Stage 1: Build the application
+# Development stage - for hot reload
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS development
+WORKDIR /src
+EXPOSE 5088
+
+# Install dotnet tools
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Copy project file and restore dependencies
+COPY ApiRunner.csproj .
+RUN dotnet restore ApiRunner.csproj
+
+# Default command for development (will be overridden by docker-compose)
+CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5088"]
+
+# Production build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
@@ -10,7 +26,7 @@ RUN dotnet restore ApiRunner.csproj
 COPY . .
 RUN dotnet publish ApiRunner.csproj -c Release -o /app/out --no-restore
 
-# Stage 2: Run the app
+# Production runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 

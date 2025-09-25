@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace ApiRunner.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class AiController : ControllerBase
 {
     private readonly ChatClient _chatClient;
@@ -32,7 +32,6 @@ Return ONLY valid JSON in this exact format:
   ""name"": ""Integration Name"",
   ""requests"": [
     {
-      ""id"": ""uniqueId"",
       ""name"": ""Request Name"",
       ""method"": ""GET|POST|PUT|DELETE"",
       ""url"": ""https://api.example.com/endpoint"",
@@ -52,7 +51,8 @@ Rules:
 - Include proper headers
 - Add extractors for chaining requests (use JSONPath like $.id, $.data.token)
 - Use placeholders like {{userId}} for extracted values
-- Keep it simple but functional";
+- Keep it simple but functional
+- Do not include id fields - they will be generated automatically";
 
             var messages = new List<ChatMessage>
             {
@@ -76,14 +76,11 @@ Rules:
                 return BadRequest("Failed to generate valid integration");
             }
 
-            // Assign IDs if missing
+            // Always assign fresh IDs (backend responsibility)
             integration.Id = Guid.NewGuid();
             foreach (var req in integration.Requests)
             {
-                if (string.IsNullOrEmpty(req.Id))
-                {
-                    req.Id = Guid.NewGuid().ToString();
-                }
+                req.Id = Guid.NewGuid().ToString();
             }
 
             return Ok(integration);

@@ -75,5 +75,10 @@ pids/
 *.swp
 *~
 
+# === Database files ===
+*.db
+*.sqlite
+*.sqlite3
+
 # === Optional Docker ===
-docker-compose.override.yml
+# docker-compose.override.yml  # Uncomment if you want to ignore dev overrides
