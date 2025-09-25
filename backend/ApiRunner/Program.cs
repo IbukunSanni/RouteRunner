@@ -1,5 +1,6 @@
 using ApiRunner.Data;
 using Microsoft.EntityFrameworkCore;
+using OpenAI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,19 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add OpenAI service
+var openAiApiKey = builder.Configuration["OpenAI:ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+if (!string.IsNullOrEmpty(openAiApiKey))
+{
+    builder.Services.AddSingleton(new OpenAI.OpenAIClient(openAiApiKey).GetChatClient("gpt-3.5-turbo"));
+}
+else
+{
+    // Fallback for development - you can remove this in production
+    builder.Services.AddSingleton<OpenAI.Chat.ChatClient>(provider => 
+        throw new InvalidOperationException("OpenAI API key not configured"));
+}
 
 var app = builder.Build();
 

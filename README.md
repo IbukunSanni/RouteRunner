@@ -81,6 +81,21 @@ dotnet test
 
 You can import a sample integration from `samples/sample-integration.json` or manually create one via the UI.
 
+A Postman collection export is also available at `samples/postman-collection.json`.
+
+## AI Integration Generator
+
+RouteRunner includes an AI-powered integration generator at `/ai/generate` endpoint. Set your OpenAI API key:
+
+```bash
+export OPENAI_API_KEY=your_key_here
+# or add to appsettings.json under "OpenAI:ApiKey"
+```
+
+Then use natural language to generate integrations:
+- "Create a user, then get all users, then delete the user"
+- "Test a login flow with authentication"
+
 ---
 
 ## API Docs (Swagger)

@@ -28,8 +28,8 @@ namespace ApiRunner.Controllers
                 status = "healthy",
                 timestamp = DateTime.UtcNow,
                 environment = _configuration["ASPNETCORE_ENVIRONMENT"] ?? "Unknown",
-                deploymentVersion = "v1.0.2",
-                deploymentDate = "2024-08-15"
+                deploymentVersion = "v1.5.0",
+                deploymentDate = "2025-08-15"
             });
         }
 

@@ -1,0 +1,57 @@
+{
+  "info": {
+    "name": "RouteRunner Sample Collection",
+    "description": "Sample integration exported from RouteRunner",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"name\": \"Ibukun\", \"avatar\": \"https://i.pravatar.cc/150?u=ibukun\", \"age\": \"27\" }"
+        },
+        "url": {
+          "raw": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users",
+          "protocol": "https",
+          "host": ["684b5c27165d05c5d35c4320", "mockapi", "io"],
+          "path": ["testapi", "users"]
+        }
+      }
+    },
+    {
+      "name": "Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users",
+          "protocol": "https",
+          "host": ["684b5c27165d05c5d35c4320", "mockapi", "io"],
+          "path": ["testapi", "users"]
+        }
+      }
+    },
+    {
+      "name": "Get Created User by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://684b5c27165d05c5d35c4320.mockapi.io/testapi/users/{{userId}}",
+          "protocol": "https",
+          "host": ["684b5c27165d05c5d35c4320", "mockapi", "io"],
+          "path": ["testapi", "users", "{{userId}}"]
+        }
+      }
+    }
+  ]
+}
