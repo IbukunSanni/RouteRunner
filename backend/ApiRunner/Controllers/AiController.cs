@@ -23,10 +23,53 @@ public class AiController : ControllerBase
         [FromBody] GenerateIntegrationRequest request
     )
     {
+        const int maxRetries = 3;
+        
         try
         {
             _logger.LogInformation("Generating integration from prompt: {Prompt}", request.Prompt);
 
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                _logger.LogInformation("Generation attempt {Attempt}/{MaxRetries}", attempt, maxRetries);
+                
+                var result = await TryGenerateIntegration(request.Prompt, attempt);
+                
+                if (result.Success)
+                {
+                    return Ok(result.Integration);
+                }
+                
+                // If this was the last attempt, return the error
+                if (attempt == maxRetries)
+                {
+                    _logger.LogWarning("All {MaxRetries} attempts failed. Final error: {Error}", maxRetries, result.ErrorMessage);
+                    return BadRequest(new
+                    {
+                        error = "AI generation failed after multiple attempts",
+                        details = $"Tried {maxRetries} times but couldn't generate a valid integration. {result.ErrorMessage}",
+                        attempt = attempt
+                    });
+                }
+                
+                // Log the failure and continue to next attempt
+                _logger.LogWarning("Attempt {Attempt} failed: {Error}. Retrying...", attempt, result.ErrorMessage);
+            }
+            
+            // This should never be reached, but just in case
+            return StatusCode(500, "Unexpected error in retry logic");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating integration");
+            return StatusCode(500, "Failed to generate integration");
+        }
+    }
+
+    private async Task<GenerationResult> TryGenerateIntegration(string prompt, int attempt)
+    {
+        try
+        {
             var systemPrompt = """
                 You are an API integration generator. Convert natural language descriptions into JSON integration objects.
 
@@ -56,28 +99,62 @@ public class AiController : ControllerBase
                 - Use placeholders like {{userId}} for extracted values
                 - Keep it simple but functional
                 - Do not include id fields - they will be generated automatically
+                - CRITICAL: Return ONLY the JSON object, no explanations or markdown formatting
                 """;
 
             var messages = new List<ChatMessage>
             {
                 new SystemChatMessage(systemPrompt),
-                new UserChatMessage(request.Prompt),
+                new UserChatMessage(prompt),
             };
 
             var response = await _chatClient.CompleteChatAsync(messages);
             var content = response.Value.Content[0].Text;
 
-            _logger.LogInformation("LLM Response: {Response}", content);
+            _logger.LogInformation("LLM Response (attempt {Attempt}): {Response}", attempt, content);
 
-            // Parse the JSON response
-            var integration = JsonSerializer.Deserialize<Integration>(
-                content,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-            );
+            // Parse the JSON response with proper error handling
+            Integration? integration;
+            try
+            {
+                // Try to clean up common JSON formatting issues
+                var cleanedContent = CleanJsonResponse(content);
+
+                integration = JsonSerializer.Deserialize<Integration>(
+                    cleanedContent,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+            }
+            catch (JsonException ex)
+            {
+                return new GenerationResult
+                {
+                    Success = false,
+                    ErrorMessage = $"Invalid JSON format: {ex.Message}",
+                    RawResponse = content
+                };
+            }
 
             if (integration == null)
             {
-                return BadRequest("Failed to generate valid integration");
+                return new GenerationResult
+                {
+                    Success = false,
+                    ErrorMessage = "JSON deserialization returned null",
+                    RawResponse = content
+                };
+            }
+
+            // Validate the integration has required fields
+            var validationError = ValidateIntegration(integration);
+            if (validationError != null)
+            {
+                return new GenerationResult
+                {
+                    Success = false,
+                    ErrorMessage = validationError,
+                    RawResponse = content
+                };
             }
 
             // Always assign fresh IDs (backend responsibility)
@@ -87,17 +164,98 @@ public class AiController : ControllerBase
                 req.Id = Guid.NewGuid().ToString();
             }
 
-            return Ok(integration);
+            return new GenerationResult
+            {
+                Success = true,
+                Integration = integration
+            };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error generating integration");
-            return StatusCode(500, "Failed to generate integration");
+            return new GenerationResult
+            {
+                Success = false,
+                ErrorMessage = $"Unexpected error: {ex.Message}"
+            };
         }
+    }
+
+    private static string? ValidateIntegration(Integration integration)
+    {
+        if (string.IsNullOrWhiteSpace(integration.Name))
+        {
+            return "The integration is missing a name.";
+        }
+
+        if (integration.Requests == null || integration.Requests.Count == 0)
+        {
+            return "The integration must have at least one request.";
+        }
+
+        // Validate each request has required fields
+        for (int i = 0; i < integration.Requests.Count; i++)
+        {
+            var request = integration.Requests[i];
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                return $"Request {i + 1} is missing a name.";
+            }
+            
+            if (string.IsNullOrWhiteSpace(request.Url))
+            {
+                return $"Request '{request.Name}' is missing a URL.";
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Method))
+            {
+                return $"Request '{request.Name}' is missing an HTTP method.";
+            }
+        }
+
+        return null; // No validation errors
+    }
+
+    private static string CleanJsonResponse(string content)
+    {
+        // Remove common markdown code block markers
+        content = content.Trim();
+
+        if (content.StartsWith("```json"))
+        {
+            content = content[7..]; // Remove ```json
+        }
+        else if (content.StartsWith("```"))
+        {
+            content = content[3..]; // Remove ```
+        }
+
+        if (content.EndsWith("```"))
+        {
+            content = content[..^3]; // Remove trailing ```
+        }
+
+        // Find the first { and last } to extract just the JSON object
+        var firstBrace = content.IndexOf('{');
+        var lastBrace = content.LastIndexOf('}');
+
+        if (firstBrace >= 0 && lastBrace > firstBrace)
+        {
+            content = content[firstBrace..(lastBrace + 1)];
+        }
+
+        return content.Trim();
     }
 }
 
 public class GenerateIntegrationRequest
 {
     public string Prompt { get; set; } = string.Empty;
+}
+
+public class GenerationResult
+{
+    public bool Success { get; set; }
+    public Integration? Integration { get; set; }
+    public string? ErrorMessage { get; set; }
+    public string? RawResponse { get; set; }
 }
