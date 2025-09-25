@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Wand2, Loader2 } from "lucide-react";
+import { api } from "@/api/client";
 
 interface AiGeneratorProps {
   onIntegrationGenerated: (integration: unknown) => void;
@@ -20,24 +21,18 @@ export function AiGenerator({ onIntegrationGenerated }: AiGeneratorProps) {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5088/api/ai/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate integration");
-      }
-
-      const integration = await response.json();
-      onIntegrationGenerated(integration);
+      const response = await api.post("/ai/generate", { prompt });
+      onIntegrationGenerated(response.data);
       setPrompt("");
     } catch (err) {
+      const error = err as {
+        response?: { data?: { error?: string } };
+        message?: string;
+      };
       setError(
-        err instanceof Error ? err.message : "Failed to generate integration"
+        error.response?.data?.error ||
+          error.message ||
+          "Failed to generate integration"
       );
     } finally {
       setIsGenerating(false);

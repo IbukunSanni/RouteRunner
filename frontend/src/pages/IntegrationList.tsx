@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { AiGenerator } from "@/components/AiGenerator";
 
 interface Integration {
   id: string;
@@ -21,6 +22,7 @@ export default function IntegrationList() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
   const [newName, setNewName] = useState("");
 
   useEffect(() => {
@@ -47,6 +49,21 @@ export default function IntegrationList() {
     }
   };
 
+  const handleAiIntegrationGenerated = async (integration: unknown) => {
+    try {
+      // Save the AI-generated integration to the backend
+      const res = await api.post("/integrations", integration);
+      setShowAiModal(false);
+      // Refresh the integrations list
+      const updatedIntegrations = await api.get("/integrations");
+      setIntegrations(updatedIntegrations.data);
+      // Navigate to the new integration
+      navigate(`/integrations/${res.data.id}`);
+    } catch (err) {
+      console.error("Failed to save AI-generated integration", err);
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -58,12 +75,20 @@ export default function IntegrationList() {
             Manage and run your API integration workflows
           </p>
         </div>
-        <Button
-          onClick={() => setShowModal(true)}
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-        >
-          + New Integration
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            onClick={() => setShowAiModal(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            ✨ AI Generate
+          </Button>
+          <Button
+            onClick={() => setShowModal(true)}
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            + Manual Create
+          </Button>
+        </div>
       </div>
 
       {loading && (
@@ -76,18 +101,40 @@ export default function IntegrationList() {
       {!loading && integrations.length === 0 && (
         <div className="text-center py-12">
           <div className="mx-auto w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
-            <svg className="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <svg
+              className="w-12 h-12 text-indigo-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No integrations yet</h3>
-          <p className="text-gray-600 mb-6">Create your first integration to get started with API testing</p>
-          <Button
-            onClick={() => setShowModal(true)}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-lg"
-          >
-            Create Your First Integration
-          </Button>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No integrations yet
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Create your first integration to get started with API testing
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button
+              onClick={() => setShowAiModal(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium px-6 py-3 rounded-lg"
+            >
+              ✨ Generate with AI
+            </Button>
+            <Button
+              onClick={() => setShowModal(true)}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-lg"
+            >
+              Create Manually
+            </Button>
+          </div>
         </div>
       )}
 
@@ -101,13 +148,33 @@ export default function IntegrationList() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   </svg>
                 </div>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    className="w-5 h-5 text-indigo-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -126,8 +193,18 @@ export default function IntegrationList() {
         <DialogContent className="bg-white rounded-xl shadow-2xl border-0 max-w-md">
           <DialogHeader className="text-center pb-4">
             <div className="mx-auto w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
               </svg>
             </div>
             <DialogTitle className="text-xl font-semibold text-gray-900">
@@ -144,7 +221,7 @@ export default function IntegrationList() {
               onChange={(e) => setNewName(e.target.value)}
               placeholder="e.g. User Authentication Flow"
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              onKeyPress={(e) => e.key === 'Enter' && createNewIntegration()}
+              onKeyPress={(e) => e.key === "Enter" && createNewIntegration()}
             />
 
             <div className="flex justify-end gap-3 pt-2">
@@ -168,6 +245,37 @@ export default function IntegrationList() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showAiModal} onOpenChange={setShowAiModal}>
+        <DialogContent className="bg-white rounded-xl shadow-2xl border-0 max-w-3xl">
+          <DialogHeader className="text-center pb-4">
+            <div className="mx-auto w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mb-4">
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
+            </div>
+            <DialogTitle className="text-xl font-semibold text-gray-900">
+              Generate Integration with AI
+            </DialogTitle>
+            <p className="text-sm text-gray-600">
+              Describe what you want to build and AI will create the integration
+              for you
+            </p>
+          </DialogHeader>
+
+          <AiGenerator onIntegrationGenerated={handleAiIntegrationGenerated} />
         </DialogContent>
       </Dialog>
     </div>
