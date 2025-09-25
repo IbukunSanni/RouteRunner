@@ -93,11 +93,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Configure port for production deployment (Fly.io, Kinsta, etc.)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-
-// Clear any default URLs and set only one binding
-app.Urls.Clear();
-app.Urls.Add($"http://0.0.0.0:{port}");
+var port = "5088"; // Default development port
+if (!app.Environment.IsDevelopment())
+{
+    port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    
+    // Clear any default URLs and set only one binding for production
+    app.Urls.Clear();
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
 
 app.Logger.LogInformation($"Starting application on port {port}");
 app.Logger.LogInformation("Deployment Version: v1.0.2 - CORS policy fixed for Vercel deployments");

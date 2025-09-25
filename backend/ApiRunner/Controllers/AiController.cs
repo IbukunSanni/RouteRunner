@@ -11,11 +11,17 @@ public class AiController : ControllerBase
 {
     private readonly ChatClient _chatClient;
     private readonly ILogger<AiController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public AiController(ChatClient chatClient, ILogger<AiController> logger)
+    public AiController(
+        ChatClient chatClient,
+        ILogger<AiController> logger,
+        IConfiguration configuration
+    )
     {
         _chatClient = chatClient;
         _logger = logger;
+        _configuration = configuration;
     }
 
     [HttpPost("generate")]
@@ -23,39 +29,60 @@ public class AiController : ControllerBase
         [FromBody] GenerateIntegrationRequest request
     )
     {
+        // Validate API key is configured
+        var apiKeyValidation = ValidateApiKey();
+        if (apiKeyValidation != null)
+        {
+            return apiKeyValidation;
+        }
+
         const int maxRetries = 3;
-        
+
         try
         {
             _logger.LogInformation("Generating integration from prompt: {Prompt}", request.Prompt);
 
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                _logger.LogInformation("Generation attempt {Attempt}/{MaxRetries}", attempt, maxRetries);
-                
+                _logger.LogInformation(
+                    "Generation attempt {Attempt}/{MaxRetries}",
+                    attempt,
+                    maxRetries
+                );
+
                 var result = await TryGenerateIntegration(request.Prompt, attempt);
-                
+
                 if (result.Success)
                 {
                     return Ok(result.Integration);
                 }
-                
+
                 // If this was the last attempt, return the error
                 if (attempt == maxRetries)
                 {
-                    _logger.LogWarning("All {MaxRetries} attempts failed. Final error: {Error}", maxRetries, result.ErrorMessage);
-                    return BadRequest(new
-                    {
-                        error = "AI generation failed after multiple attempts",
-                        details = $"Tried {maxRetries} times but couldn't generate a valid integration. {result.ErrorMessage}",
-                        attempt = attempt
-                    });
+                    _logger.LogWarning(
+                        "All {MaxRetries} attempts failed. Final error: {Error}",
+                        maxRetries,
+                        result.ErrorMessage
+                    );
+                    return BadRequest(
+                        new
+                        {
+                            error = "AI generation failed after multiple attempts",
+                            details = $"Tried {maxRetries} times but couldn't generate a valid integration. {result.ErrorMessage}",
+                            attempt = attempt,
+                        }
+                    );
                 }
-                
+
                 // Log the failure and continue to next attempt
-                _logger.LogWarning("Attempt {Attempt} failed: {Error}. Retrying...", attempt, result.ErrorMessage);
+                _logger.LogWarning(
+                    "Attempt {Attempt} failed: {Error}. Retrying...",
+                    attempt,
+                    result.ErrorMessage
+                );
             }
-            
+
             // This should never be reached, but just in case
             return StatusCode(500, "Unexpected error in retry logic");
         }
@@ -111,7 +138,11 @@ public class AiController : ControllerBase
             var response = await _chatClient.CompleteChatAsync(messages);
             var content = response.Value.Content[0].Text;
 
-            _logger.LogInformation("LLM Response (attempt {Attempt}): {Response}", attempt, content);
+            _logger.LogInformation(
+                "LLM Response (attempt {Attempt}): {Response}",
+                attempt,
+                content
+            );
 
             // Parse the JSON response with proper error handling
             Integration? integration;
@@ -131,7 +162,7 @@ public class AiController : ControllerBase
                 {
                     Success = false,
                     ErrorMessage = $"Invalid JSON format: {ex.Message}",
-                    RawResponse = content
+                    RawResponse = content,
                 };
             }
 
@@ -141,7 +172,7 @@ public class AiController : ControllerBase
                 {
                     Success = false,
                     ErrorMessage = "JSON deserialization returned null",
-                    RawResponse = content
+                    RawResponse = content,
                 };
             }
 
@@ -153,7 +184,7 @@ public class AiController : ControllerBase
                 {
                     Success = false,
                     ErrorMessage = validationError,
-                    RawResponse = content
+                    RawResponse = content,
                 };
             }
 
@@ -164,18 +195,14 @@ public class AiController : ControllerBase
                 req.Id = Guid.NewGuid().ToString();
             }
 
-            return new GenerationResult
-            {
-                Success = true,
-                Integration = integration
-            };
+            return new GenerationResult { Success = true, Integration = integration };
         }
         catch (Exception ex)
         {
             return new GenerationResult
             {
                 Success = false,
-                ErrorMessage = $"Unexpected error: {ex.Message}"
+                ErrorMessage = $"Unexpected error: {ex.Message}",
             };
         }
     }
@@ -200,7 +227,7 @@ public class AiController : ControllerBase
             {
                 return $"Request {i + 1} is missing a name.";
             }
-            
+
             if (string.IsNullOrWhiteSpace(request.Url))
             {
                 return $"Request '{request.Name}' is missing a URL.";
@@ -244,6 +271,47 @@ public class AiController : ControllerBase
         }
 
         return content.Trim();
+    }
+
+    private ActionResult? ValidateApiKey()
+    {
+        var apiKey =
+            _configuration["OpenAI:ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            _logger.LogError("OpenAI API key is not configured");
+            return BadRequest(
+                new
+                {
+                    error = "API key not configured",
+                    details = "OpenAI API key is missing. Please configure it in appsettings.json or as an environment variable OPENAI_API_KEY.",
+                }
+            );
+        }
+
+        if (!IsValidApiKeyFormat(apiKey))
+        {
+            _logger.LogError("OpenAI API key format is invalid");
+            return BadRequest(
+                new
+                {
+                    error = "Invalid API key format",
+                    details = "The configured OpenAI API key does not appear to be in the correct format.",
+                }
+            );
+        }
+
+        return null; // API key is valid
+    }
+
+    private static bool IsValidApiKeyFormat(string apiKey)
+    {
+        // OpenAI API keys typically start with "sk-" and have a specific length
+        // This is a basic format check, not authentication validation
+        return !string.IsNullOrWhiteSpace(apiKey)
+            && apiKey.StartsWith("sk-")
+            && apiKey.Length >= 20; // Minimum reasonable length
     }
 }
 
