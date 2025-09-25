@@ -1,7 +1,7 @@
+using System.Text.Json;
+using ApiRunner.Models;
 using Microsoft.AspNetCore.Mvc;
 using OpenAI.Chat;
-using ApiRunner.Models;
-using System.Text.Json;
 
 namespace ApiRunner.Controllers;
 
@@ -19,45 +19,49 @@ public class AiController : ControllerBase
     }
 
     [HttpPost("generate")]
-    public async Task<ActionResult<Integration>> GenerateIntegration([FromBody] GenerateIntegrationRequest request)
+    public async Task<ActionResult<Integration>> GenerateIntegration(
+        [FromBody] GenerateIntegrationRequest request
+    )
     {
         try
         {
             _logger.LogInformation("Generating integration from prompt: {Prompt}", request.Prompt);
 
-            var systemPrompt = @"You are an API integration generator. Convert natural language descriptions into JSON integration objects.
+            var systemPrompt = """
+                You are an API integration generator. Convert natural language descriptions into JSON integration objects.
 
-Return ONLY valid JSON in this exact format:
-{
-  ""name"": ""Integration Name"",
-  ""requests"": [
-    {
-      ""name"": ""Request Name"",
-      ""method"": ""GET|POST|PUT|DELETE"",
-      ""url"": ""https://api.example.com/endpoint"",
-      ""headers"": {
-        ""Content-Type"": ""application/json""
-      },
-      ""body"": ""{\""key\"": \""value\""}"",
-      ""extractors"": {
-        ""variableName"": ""$.jsonPath""
-      }
-    }
-  ]
-}
+                Return ONLY valid JSON in this exact format:
+                {
+                  "name": "Integration Name",
+                  "requests": [
+                    {
+                      "name": "Request Name",
+                      "method": "GET|POST|PUT|DELETE",
+                      "url": "https://api.example.com/endpoint",
+                      "headers": {
+                        "Content-Type": "application/json"
+                      },
+                      "body": "{\"key\": \"value\"}",
+                      "extractors": {
+                        "variableName": "$.jsonPath"
+                      }
+                    }
+                  ]
+                }
 
-Rules:
-- Use realistic API endpoints (JSONPlaceholder, httpbin.org, etc.)
-- Include proper headers
-- Add extractors for chaining requests (use JSONPath like $.id, $.data.token)
-- Use placeholders like {{userId}} for extracted values
-- Keep it simple but functional
-- Do not include id fields - they will be generated automatically";
+                Rules:
+                - Use realistic API endpoints (JSONPlaceholder, httpbin.org, etc.)
+                - Include proper headers
+                - Add extractors for chaining requests (use JSONPath like $.id, $.data.token)
+                - Use placeholders like {{userId}} for extracted values
+                - Keep it simple but functional
+                - Do not include id fields - they will be generated automatically
+                """;
 
             var messages = new List<ChatMessage>
             {
                 new SystemChatMessage(systemPrompt),
-                new UserChatMessage(request.Prompt)
+                new UserChatMessage(request.Prompt),
             };
 
             var response = await _chatClient.CompleteChatAsync(messages);
@@ -66,10 +70,10 @@ Rules:
             _logger.LogInformation("LLM Response: {Response}", content);
 
             // Parse the JSON response
-            var integration = JsonSerializer.Deserialize<Integration>(content, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var integration = JsonSerializer.Deserialize<Integration>(
+                content,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
 
             if (integration == null)
             {
