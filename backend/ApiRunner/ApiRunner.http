@@ -1,6 +1,30 @@
-@ApiRunner_HostAddress = http://localhost:5088
+@ApiRunner_HostAddress = http://localhost:5000
+@ApiRunner_ProductionAddress = https://your-app.fly.dev
 
-GET {{ApiRunner_HostAddress}}/weatherforecast/
+### Health Check
+GET {{ApiRunner_HostAddress}}/api/health
 Accept: application/json
+
+###
+
+### Hello World
+GET {{ApiRunner_HostAddress}}/api/hello
+Accept: application/json
+
+###
+
+### Get All Integrations
+GET {{ApiRunner_HostAddress}}/api/integrations
+Accept: application/json
+
+###
+
+### Generate Integration with AI
+POST {{ApiRunner_HostAddress}}/api/ai/generate
+Content-Type: application/json
+
+{
+  "prompt": "Create an integration that gets user data from JSONPlaceholder API and then gets their posts"
+}
 
 ###
