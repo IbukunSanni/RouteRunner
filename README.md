@@ -85,13 +85,33 @@ A Postman collection export is also available at `samples/postman-collection.jso
 
 ## AI Integration Generator
 
-RouteRunner includes an AI-powered integration generator at `/ai/generate` endpoint. Set your OpenAI API key:
+RouteRunner includes an AI-powered integration generator at `/ai/generate` endpoint. 
 
+### Setup OpenAI API Key
+
+**Option 1: .env File (Recommended for Development)**
+1. Copy `backend/ApiRunner/.env.example` to `backend/ApiRunner/.env`
+2. Replace `your_openai_api_key_here` with your actual OpenAI API key
+3. The `.env` file is automatically ignored by git
+
+**Option 2: Environment Variable**
 ```bash
+# Windows Command Prompt
+set OPENAI_API_KEY=your_key_here
+
+# Windows PowerShell
+$env:OPENAI_API_KEY="your_key_here"
+
+# Linux/Mac
 export OPENAI_API_KEY=your_key_here
-# or add to appsettings.json under "OpenAI:ApiKey"
 ```
 
+**Option 3: Configuration File**
+1. Copy `backend/ApiRunner/appsettings.Development.template.json` to `appsettings.Development.json`
+2. Replace `your_openai_api_key_here` with your actual key
+3. **Never commit this file to version control**
+
+### Usage
 Then use natural language to generate integrations:
 - "Create a user, then get all users, then delete the user"
 - "Test a login flow with authentication"

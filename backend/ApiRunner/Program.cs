@@ -1,6 +1,10 @@
 using ApiRunner.Data;
 using Microsoft.EntityFrameworkCore;
 using OpenAI;
+using DotNetEnv;
+
+// Load .env file if it exists
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 

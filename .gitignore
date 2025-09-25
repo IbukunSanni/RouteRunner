@@ -85,3 +85,11 @@ pids/
 
 # === Optional Docker ===
 # docker-compose.override.yml  # Uncomment if you want to ignore dev overrides
+# === Configuration files with secrets ===
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/appsettings.*.json
+!**/appsettings.json#
+ === Environment files ===
+**/.env
+!**/.env.example
