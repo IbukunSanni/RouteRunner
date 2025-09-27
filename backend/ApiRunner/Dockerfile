@@ -1,5 +1,5 @@
 # Development stage - for hot reload
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS development
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS development
 WORKDIR /src
 EXPOSE 5088
 
@@ -15,7 +15,7 @@ RUN dotnet restore ApiRunner.csproj
 CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5088"]
 
 # Production build stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy project file and restore dependencies
@@ -27,7 +27,7 @@ COPY . .
 RUN dotnet publish ApiRunner.csproj -c Release -o /app/out --no-restore
 
 # Production runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 
 # Copy published output from build stage
