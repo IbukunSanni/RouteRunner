@@ -26,28 +26,20 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 ---
 ## Demo
 
-See RouteRunner's most powerful features in action:
+**See RouteRunner in Action:** This comprehensive demo showcases all major features including AI-powered integration generation, live API execution, dynamic variable chaining, request management, and real-time response handling.
 
-### 1. AI-Powered Integration Generation
-*Describe your API workflow in plain English and watch AI create complete integrations with chaining, extractors, and realistic endpoints.*
+![RouteRunner Demo](media/RouteRunnerDemo.gif)
 
-![AI Generation](media/ai-generation.gif)
-
-### 2. Live API Execution & Request Management  
-*Run real API calls sequentially, view responses in real-time, and manage requests with drag-and-drop reordering.*
-
-![API Execution](media/api-execution.gif)
-
-### 3. Dynamic Variable Chaining & Runtime Values
-*Extract data from responses, chain requests dynamically, and inject runtime values for flexible workflows.*
-
-![Variable Chaining](media/variable-chaining.gif)
+**What you'll see in this demo:**
+- **AI Integration Generation** - Describe workflows in plain English and watch AI create complete integrations
+- **Live API Execution** - Run chained requests sequentially with real-time response display
+- **Dynamic Variable Chaining** - Extract data from responses and inject into subsequent requests
+- **Request Management** - Create, edit, reorder, and manage API requests with drag-and-drop
+- **Response Analysis** - View formatted responses, status codes, and execution timing
 
 ---
 
 > **What makes RouteRunner special:** Unlike traditional API tools, RouteRunner combines AI-powered generation with intelligent request chaining, making complex API testing workflows as simple as describing what you want to achieve.
-
-> All demo media is stored in the `media/` folder.
 
 ## Tech Stack
 

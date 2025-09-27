@@ -20,7 +20,6 @@ Modern React frontend for RouteRunner - A Postman-like API integration testing t
 - **Integration Management**: Create, edit, delete, and organize API integration workflows
 - **Request Builder**: Visual editor for HTTP requests with method, URL, headers, and body
 - **Drag & Drop**: Reorder requests within integrations using intuitive drag-and-drop
-- **Runtime Values**: Dynamic placeholder replacement with `{{variable}}` syntax
 - **Response Viewer**: Pretty-printed JSON responses with status codes and timing
 - **Variable Extraction**: JSONPath-based extraction from previous responses for request chaining
 
