@@ -47,6 +47,7 @@ package-lock.json
 # === .NET (backend) ===
 /backend/**/bin/
 /backend/**/obj/
+/backend/**/TestResults/
 /backend/**/*.user
 /backend/**/*.suo
 /backend/**/*.vs/
