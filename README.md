@@ -24,23 +24,30 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 - **Code formatting** with CSharpier for consistent C# code style
 
 ---
-## Demo
+## 🚀 Demo
 
-Here's a quick look at RouteRunner in action:
+See RouteRunner's most powerful features in action:
 
-*Exploring the site*
-![Exploring](media/navigation.gif)
+### 1. 🤖 AI-Powered Integration Generation
+*Describe your API workflow in plain English and watch AI create complete integrations with chaining, extractors, and realistic endpoints.*
 
-*List of ALL Integrations*
-![List of All Integrations](media/integrations_list.png)
+![AI Generation](media/ai-generation.gif)
 
-*List of All Requests in an Integration*
-![List of All Requests in an Integration](media/integrations_edit.png)
+### 2. ⚡ Live API Execution & Request Management  
+*Run real API calls sequentially, view responses in real-time, and manage requests with drag-and-drop reordering.*
+
+![API Execution](media/api-execution.gif)
+
+### 3. 🔗 Dynamic Variable Chaining & Runtime Values
+*Extract data from responses, chain requests dynamically, and inject runtime values for flexible workflows.*
+
+![Variable Chaining](media/variable-chaining.gif)
 
 ---
-<!-- Add more as needed -->
 
-> All media is stored in the `media/` folder.
+> **What makes RouteRunner special:** Unlike traditional API tools, RouteRunner combines AI-powered generation with intelligent request chaining, making complex API testing workflows as simple as describing what you want to achieve.
+
+> All demo media is stored in the `media/` folder.
 
 ## Tech Stack
 
