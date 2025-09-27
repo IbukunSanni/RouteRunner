@@ -36,6 +36,13 @@ public class AiController : ControllerBase
             return apiKeyValidation;
         }
 
+        // Validate AI access password
+        var passwordValidation = ValidateAiAccessPassword(request.Password);
+        if (passwordValidation != null)
+        {
+            return passwordValidation;
+        }
+
         const int maxRetries = 3;
 
         try
@@ -313,11 +320,43 @@ public class AiController : ControllerBase
             && apiKey.StartsWith("sk-")
             && apiKey.Length >= 20; // Minimum reasonable length
     }
+
+    private ActionResult? ValidateAiAccessPassword(string providedPassword)
+    {
+        var requiredPassword = _configuration["AI:AccessPassword"] ?? Environment.GetEnvironmentVariable("AI_ACCESS_PASSWORD");
+
+        if (string.IsNullOrWhiteSpace(requiredPassword))
+        {
+            _logger.LogWarning("AI access password is not configured - AI endpoint is unprotected!");
+            return BadRequest(
+                new
+                {
+                    error = "AI access not configured",
+                    details = "AI access password is not configured on the server. Please contact the administrator."
+                }
+            );
+        }
+
+        if (string.IsNullOrWhiteSpace(providedPassword) || providedPassword != requiredPassword)
+        {
+            _logger.LogWarning("Invalid AI access password attempt from {IP}", HttpContext.Connection.RemoteIpAddress);
+            return Unauthorized(
+                new
+                {
+                    error = "Invalid password",
+                    details = "The provided password is incorrect. AI generation requires a valid access password."
+                }
+            );
+        }
+
+        return null; // Password is valid
+    }
 }
 
 public class GenerateIntegrationRequest
 {
     public string Prompt { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }
 
 public class GenerationResult
