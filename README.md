@@ -24,21 +24,21 @@ A lightweight Postman-like tool to store and run chained API calls in order. Bui
 - **Code formatting** with CSharpier for consistent C# code style
 
 ---
-## 🚀 Demo
+## Demo
 
 See RouteRunner's most powerful features in action:
 
-### 1. 🤖 AI-Powered Integration Generation
+### 1. AI-Powered Integration Generation
 *Describe your API workflow in plain English and watch AI create complete integrations with chaining, extractors, and realistic endpoints.*
 
 ![AI Generation](media/ai-generation.gif)
 
-### 2. ⚡ Live API Execution & Request Management  
+### 2. Live API Execution & Request Management  
 *Run real API calls sequentially, view responses in real-time, and manage requests with drag-and-drop reordering.*
 
 ![API Execution](media/api-execution.gif)
 
-### 3. 🔗 Dynamic Variable Chaining & Runtime Values
+### 3. Dynamic Variable Chaining & Runtime Values
 *Extract data from responses, chain requests dynamically, and inject runtime values for flexible workflows.*
 
 ![Variable Chaining](media/variable-chaining.gif)
@@ -234,6 +234,7 @@ To explore the endpoints interactively.
 - **Team collaboration** features
 - **API performance monitoring** and analytics
 - **Custom plugins** and extensibility
+
 
 
 
